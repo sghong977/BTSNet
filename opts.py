@@ -211,7 +211,7 @@ def parse_opts():
                         type=int,
                         help='Number of threads for multi-thread loading')
     parser.add_argument('--checkpoint',
-                        default=10,
+                        default=200,
                         type=int,
                         help='Trained model is saved at every this epochs.')
     parser.add_argument(
