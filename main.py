@@ -13,10 +13,8 @@ import torch.distributed as dist
 from torch.backends import cudnn
 import torchvision
 
-#from opts import parse_opts
 from model import (generate_model, load_pretrained_model, make_data_parallel,
                    get_fine_tuning_parameters)
-#from mean import get_mean_std
 from spatial_transforms import (Compose, Normalize, Resize, CenterCrop,
                                 CornerCrop, MultiScaleCornerCrop,
                                 RandomResizedCrop, RandomHorizontalFlip,

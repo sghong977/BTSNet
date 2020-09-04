@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from models import resnet, resnet2p1d, resnext     #sknet will be added here
+from models import resnet, resnet2p1d, resnext, sknet_3d
 
 
 def get_module_name(name):
@@ -64,6 +64,16 @@ def generate_model(opt):
                                        conv1_t_size=opt.conv1_t_size,
                                        conv1_t_stride=opt.conv1_t_stride,
                                        no_max_pool=opt.no_max_pool)
+    elif opt.model == 'sknet':
+        model = sknet_3d.generate_model(model_depth=opt.model_depth,
+                                       #cardinality=opt.resnext_cardinality,
+                                       n_classes=opt.n_classes,
+                                       n_input_channels=opt.n_input_channels,
+                                       shortcut_type=opt.resnet_shortcut,
+                                       conv1_t_size=opt.conv1_t_size,
+                                       conv1_t_stride=opt.conv1_t_stride,
+                                       no_max_pool=opt.no_max_pool)
+                                      #widen_factor=opt.resnet_widen_factor)
     return model
 
 

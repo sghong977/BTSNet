@@ -39,6 +39,7 @@ def train_epoch(epoch,
     end_time = time.time()
 
     for i, (inputs, targets) in enumerate(data_loader):
+        #print(inputs.shape)
         data_time.update(time.time() - end_time)
         inputs = inputs.to(device, non_blocking=True) # remove this code
         targets = targets.to(device, non_blocking=True)
