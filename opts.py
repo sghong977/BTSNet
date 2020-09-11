@@ -4,6 +4,15 @@ from pathlib import Path
 
 def parse_opts():
     parser = argparse.ArgumentParser()
+    #------- sknet 
+    parser.add_argument(
+        '--M',
+        default=2,
+        type=int,
+        help=
+        'Num of candidates for sknet M'
+    )
+    #------------
     parser.add_argument('--root_path',
                         default=None,
                         type=Path,

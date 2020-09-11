@@ -34,7 +34,7 @@ def get_fine_tuning_parameters(model, ft_begin_module):
 
 def generate_model(opt):
     assert opt.model in [
-        'resnet', 'resnet2p1d', 'resnext'  #sknet will be added here
+        'sknet', 'resnet', 'resnet2p1d', 'resnext'  #sknet will be added here
     ]
 
     if opt.model == 'resnet':
@@ -66,6 +66,7 @@ def generate_model(opt):
                                        no_max_pool=opt.no_max_pool)
     elif opt.model == 'sknet':
         model = sknet_3d.generate_model(model_depth=opt.model_depth,
+                                       M=opt.M,
                                        #cardinality=opt.resnext_cardinality,
                                        n_classes=opt.n_classes,
                                        n_input_channels=opt.n_input_channels,

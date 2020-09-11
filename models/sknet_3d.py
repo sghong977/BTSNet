@@ -62,7 +62,10 @@ class SKConv(nn.Module):
         #feats = feats.view(batch_size, self.M, self.mid_planes, -1,-1,-1)
         
         #feats_U = torch.sum(feats, dim=1)
-        feats_U = feats[0] + feats[1]   #hard-coding (M=2)
+        feats_U = feats[0]#hard-coding (M=2)
+        for i in range(1, self.M):
+            feats_U += feats[i]   
+
         feats_S = self.gap(feats_U)
         feats_Z = self.fc(feats_S)
 
@@ -76,8 +79,10 @@ class SKConv(nn.Module):
         #feats_V = torch.sum(torch.FloatTensor(feats) * attention_vectors, dim=1)
         attention_vectors = list(attention_vectors.chunk(self.M, dim=1))  # split to a and b   chunk为pytorch方法，将tensor按照指定维度切分成 几个tensor块
         attention_vectors = list(map(lambda x: torch.squeeze(x,dim=1), attention_vectors))
-        feats_V = list(map(lambda x, y: x * y, attention_vectors, feats))
-        feats_V = feats_V[0] + feats_V[1]
+        fV = list(map(lambda x, y: x * y, attention_vectors, feats))
+        feats_V = fV[0]
+        for i in range(1, self.M):
+            feats_V += fV[i]
         #print(feats_V.shape)
 
         return feats_V
@@ -147,6 +152,7 @@ class SKNet(nn.Module):
                 layers, #eg. [2,2,2,2] = nums_block_list
                 block_inplanes, # from get_inplane()
                 n_input_channels=3,
+                M=2,
                 
                 conv1_t_size=7, # to handle temporal stride at 'basic_conv()'
                 conv1_t_stride=1, # to handle temporal stride at 'basic_conv()'
@@ -157,6 +163,7 @@ class SKNet(nn.Module):
                 n_classes=101):
         super(SKNet, self).__init__()
 
+        self.M = M
         self.in_planes = block_inplanes[0]
         self.no_max_pool = no_max_pool
 
@@ -205,10 +212,10 @@ class SKNet(nn.Module):
     #_, planes, blocks, shortcut_type
     def _make_layer(self, planes, cardinality, nums_block, stride=1):
                 
-        layers=[SKUnit(self.in_planes, planes, cardinality, stride=stride)]
+        layers=[SKUnit(self.in_planes, planes, cardinality, M=self.M, stride=stride)]
         self.in_planes = planes * SKUnit.expansion 
         for _ in range(1,nums_block):
-            layers.append(SKUnit(self.in_planes, planes, cardinality))
+            layers.append(SKUnit(self.in_planes, planes, cardinality, M=self.M))
         return nn.Sequential(*layers)
 
     def forward(self, x):

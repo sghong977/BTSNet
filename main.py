@@ -289,6 +289,9 @@ def main_worker(index, opt):
 
     criterion = CrossEntropyLoss().to(opt.device)
 
+    info = opt.dataset + "_" + opt.model + str(opt.model_depth) + '_M' + str(opt.M) + '_'    ###
+    print(info)
+
     if not opt.no_train:
         (train_loader, train_sampler, train_logger, train_batch_logger,
          optimizer, scheduler) = get_train_utils(opt, parameters)
@@ -316,6 +319,7 @@ def main_worker(index, opt):
             if opt.distributed:
                 train_sampler.set_epoch(i)
             current_lr = get_lr(optimizer)
+
             tmp_acc, tmp_loss = train_epoch(i, train_loader, model, criterion, optimizer,
                         opt.device, current_lr, train_logger,
                         train_batch_logger, tb_writer, opt.distributed)
@@ -327,7 +331,7 @@ def main_worker(index, opt):
             print("Train Accuracy : ", tmp_acc, ", Loss : ", tmp_loss)
 
             if i % opt.checkpoint == 0 and opt.is_master_node:
-                save_file_path = opt.result_path / 'save_{}.pth'.format(i)
+                save_file_path = opt.result_path / '{}_save_{}.pth'.format(info, i)
                 save_checkpoint(save_file_path, i, opt.arch, model, optimizer,
                                 scheduler)
 
@@ -352,7 +356,7 @@ def main_worker(index, opt):
                             inference_class_names, opt.inference_no_average,
                             opt.output_topk)
     # save file
-    infoname = opt.dataset + "_" + time.strftime("%Y%m%d-%H%M%S")
+    infoname = info + time.strftime("%Y%m%d-%H%M%S")
 
     timestr = "./results/" + infoname
     with open(timestr+'_val_acc.txt', 'w') as f:

@@ -6,6 +6,20 @@ from datasets.videodataset_multiclips import (VideoDatasetMultiClips,
 from datasets.activitynet import ActivityNet
 from datasets.loader import VideoLoader, VideoLoaderHDF5, VideoLoaderFlowHDF5
 
+import torch
+
+# --- class for concat multiple datasets ---------------
+class ConcatDataset(torch.utils.data.Dataset):
+    def __init__(self, *datasets):
+        self.datasets = datasets
+
+    def __getitem__(self, i):
+        return tuple(d[i] for d in self.datasets)
+
+    def __len__(self):
+        return min(len(d) for d in self.datasets)
+#--------------------------------------------------------
+
 def image_name_formatter(x):
     return f'image_{x:05d}.jpg'
 
@@ -53,6 +67,14 @@ def get_training_data(video_path,
                                     target_transform=target_transform,
                                     video_loader=loader,
                                     video_path_formatter=video_path_formatter)
+    # for pretraining, we need Kinetics-700 and Moment-in-time Datasets
+    elif dataset_name == 'KM':
+        kinetics_data = None
+        moment_data = None
+
+        #concat (i'm not sure if it works)
+        training_data = ConcatDataset(kinetics_data, moment_data)
+
     else:
         training_data = VideoDataset(video_path,
                                      annotation_path,

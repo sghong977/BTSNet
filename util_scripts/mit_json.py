@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from .utils import get_n_frames
+from utils import get_n_frames
 
 
 def convert_csv_to_dict(csv_path, subset):
@@ -79,28 +79,32 @@ def convert_mit_csv_to_json(class_file_path, train_csv_path, val_csv_path,
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'dir_path',
+        '--dir_path',
         default=None,
         type=Path,
         help=('Directory path including moments_categories.txt, '
               'trainingSet.csv, validationSet.csv, '
               '(testingSet.csv (optional))'))
-    parser.add_argument('video_path',
+    parser.add_argument('--video_path',
                         default=None,
                         type=Path,
                         help=('Path of video directory (jpg).'
                               'Using to get n_frames of each video.'))
-    parser.add_argument('dst_path',
+    parser.add_argument('--dst_path',
                         default=None,
                         type=Path,
                         help='Path of dst json file.')
 
     args = parser.parse_args()
 
+    #args.dir_path = '../../../raid/Moment/Moments_in_Time_256x256_30fps/'
+    #args.video_path = '../../../raid/Moment/Moments_in_Time_256x256_30fps/'
+    #args.dst_path = './'
+
     class_file_path = args.dir_path / 'moments_categories.txt'
     train_csv_path = args.dir_path / 'trainingSet.csv'
     val_csv_path = args.dir_path / 'validationSet.csv'
-    test_csv_path = args.dir_path / 'testingSet.csv'
+    #test_csv_path = args.dir_path / 'testingSet.csv'
 
     convert_mit_csv_to_json(class_file_path, train_csv_path, val_csv_path,
-                            test_csv_path, args.video_path, args.dst_path)
+                            None, args.video_path, args.dst_path)

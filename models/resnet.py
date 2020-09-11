@@ -65,7 +65,7 @@ class Bottleneck(nn.Module):
 
     def __init__(self, in_planes, planes, stride=1, downsample=None):
         super().__init__()
-
+        print("Bottleneck init")
         self.conv1 = conv1x1x1(in_planes, planes)
         self.bn1 = nn.BatchNorm3d(planes)
         self.conv2 = conv3x3x3(planes, planes, stride)
@@ -113,7 +113,7 @@ class ResNet(nn.Module):
                  widen_factor=1.0,
                  n_classes=400):
         super().__init__()
-
+        print("ResNet init")
         block_inplanes = [int(x * widen_factor) for x in block_inplanes]
 
         self.in_planes = block_inplanes[0]
@@ -170,6 +170,7 @@ class ResNet(nn.Module):
         return out
 
     def _make_layer(self, block, planes, blocks, shortcut_type, stride=1):
+        print("make layer")
         downsample = None
         if stride != 1 or self.in_planes != planes * block.expansion:
             if shortcut_type == 'A':
@@ -178,7 +179,7 @@ class ResNet(nn.Module):
                                      stride=stride)
             else:
                 downsample = nn.Sequential(
-                    conv1x1x1(self.in_planes, planes * block.expansion, stride),
+                    nn.Conv3d(self.in_planes, planes * block.expansion, kernel_size=1, bias=False, stride=stride),
                     nn.BatchNorm3d(planes * block.expansion))
 
         layers = []
