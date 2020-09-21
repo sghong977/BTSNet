@@ -139,6 +139,32 @@ def get_train_utils(opt, model_parameters):
     return (train_loader, train_sampler, train_logger, train_batch_logger, optimizer, scheduler)
 
 
+def resume_model(resume_path, arch, model):
+    print('loading checkpoint {} model'.format(resume_path))
+    checkpoint = torch.load(resume_path, map_location='cpu')
+    assert arch == checkpoint['arch']
+
+    if hasattr(model, 'module'):
+        model.module.load_state_dict(checkpoint['state_dict'])
+    else:
+        model.load_state_dict(checkpoint['state_dict'])
+
+    return model
+
+
+def resume_train_utils(resume_path, begin_epoch, optimizer, scheduler):
+    print('loading checkpoint {} train utils'.format(resume_path))
+    checkpoint = torch.load(resume_path, map_location='cpu')
+
+    begin_epoch = checkpoint['epoch'] + 1
+    print("begin_epoch", begin_epoch)
+    if optimizer is not None and 'optimizer' in checkpoint:
+        optimizer.load_state_dict(checkpoint['optimizer'])
+    if scheduler is not None and 'scheduler' in checkpoint:
+        scheduler.load_state_dict(checkpoint['scheduler'])
+
+    return begin_epoch, optimizer, scheduler
+
 def get_val_utils(opt):
     normalize = get_normalize_method(opt.mean, opt.std, opt.no_mean_norm,
                                      opt.no_std_norm)

@@ -34,7 +34,7 @@ def get_training_data(video_path,
                       target_transform=None,
                       ):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -62,6 +62,7 @@ def get_training_data(video_path,
         training_data = ActivityNet(video_path,
                                     annotation_path,
                                     'training',
+                                    data_name=dataset_name,
                                     spatial_transform=spatial_transform,
                                     temporal_transform=temporal_transform,
                                     target_transform=target_transform,
@@ -79,6 +80,7 @@ def get_training_data(video_path,
         training_data = VideoDataset(video_path,
                                      annotation_path,
                                      'training',
+                                     data_name=dataset_name,
                                      spatial_transform=spatial_transform,
                                      temporal_transform=temporal_transform,
                                      target_transform=target_transform,
@@ -97,7 +99,7 @@ def get_validation_data(video_path,
                         temporal_transform=None,
                         target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -125,6 +127,7 @@ def get_validation_data(video_path,
         validation_data = ActivityNet(video_path,
                                       annotation_path,
                                       'validation',
+                                      data_name=dataset_name,
                                       spatial_transform=spatial_transform,
                                       temporal_transform=temporal_transform,
                                       target_transform=target_transform,
@@ -135,6 +138,7 @@ def get_validation_data(video_path,
             video_path,
             annotation_path,
             'validation',
+            data_name=dataset_name,
             spatial_transform=spatial_transform,
             temporal_transform=temporal_transform,
             target_transform=target_transform,
