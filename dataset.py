@@ -23,6 +23,8 @@ class ConcatDataset(torch.utils.data.Dataset):
 def image_name_formatter(x):
     return f'image_{x:05d}.jpg'
 
+def jester_img_name_formatter(x):
+    return f'{x:05d}.jpg'
 
 def get_training_data(video_path,
                       annotation_path,
@@ -76,6 +78,25 @@ def get_training_data(video_path,
         #concat (i'm not sure if it works)
         training_data = ConcatDataset(kinetics_data, moment_data)
 
+    elif dataset_name == 'jester':
+        # different loader
+        if get_image_backend() == 'accimage':
+            from datasets.loader import ImageLoaderAccImage
+            loader = VideoLoader(jester_img_name_formatter, ImageLoaderAccImage())
+        else:
+            loader = VideoLoader(jester_img_name_formatter)
+        video_path_formatter = (
+            lambda root_path, label, video_id: root_path / video_id)  #
+        
+        training_data = VideoDataset(video_path,
+                                     annotation_path,
+                                     'training',
+                                     data_name=dataset_name,
+                                     spatial_transform=spatial_transform,
+                                     temporal_transform=temporal_transform,
+                                     target_transform=target_transform,
+                                     video_loader=loader,
+                                     video_path_formatter=video_path_formatter)
     else:
         training_data = VideoDataset(video_path,
                                      annotation_path,
@@ -133,6 +154,26 @@ def get_validation_data(video_path,
                                       target_transform=target_transform,
                                       video_loader=loader,
                                       video_path_formatter=video_path_formatter)
+    elif dataset_name == 'jester':
+        # different loader
+        if get_image_backend() == 'accimage':
+            from datasets.loader import ImageLoaderAccImage
+            loader = VideoLoader(jester_img_name_formatter, ImageLoaderAccImage())
+        else:
+            loader = VideoLoader(jester_img_name_formatter)
+        video_path_formatter = (
+            lambda root_path, label, video_id: root_path / video_id)  #
+
+        validation_data = VideoDatasetMultiClips(
+            video_path,
+            annotation_path,
+            'validation',
+            data_name=dataset_name,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            video_loader=loader,
+            video_path_formatter=video_path_formatter)        
     else:
         validation_data = VideoDatasetMultiClips(
             video_path,

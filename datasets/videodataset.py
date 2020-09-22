@@ -95,7 +95,7 @@ class VideoDataset(data.Dataset):
                  target_type='label'):
 
         self.data_name = data_name
-
+        
         self.data, self.class_names = self.__make_dataset(
             root_path, annotation_path, subset, video_path_formatter)
 

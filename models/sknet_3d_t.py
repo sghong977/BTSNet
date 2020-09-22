@@ -30,12 +30,47 @@ class SKConv(nn.Module):
         self.M = M
         self.mid_planes = mid_planes
         self.convs = nn.ModuleList([])
+
+        # manipulate candidates here ------------------
+        # dilation & padding 2 = kernel 5*5 (3=7*7, 4=9*9, 5=11*11)
+
+        # M = 1
+        self.convs.append(nn.Sequential(
+            nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=(1,1,1), dilation=(1,1,1), groups=G, bias=False),
+            nn.BatchNorm3d(mid_planes),
+            nn.ReLU(inplace=False)
+        ))
+        # M = 2
+        if M > 1:
+            self.convs.append(nn.Sequential(
+                nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=(4,4,4), dilation=(4,4,4), groups=G, bias=False),
+                nn.BatchNorm3d(mid_planes),
+                nn.ReLU(inplace=False)
+                ))
+        # M = 3
+        if M > 2 :
+            self.convs.append(nn.Sequential(
+                nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=(1,2,2), dilation=(1,2,2), groups=G, bias=False),
+                nn.BatchNorm3d(mid_planes),
+                nn.ReLU(inplace=False)
+                ))
+        # M = 4
+        if M > 3 :
+            self.convs.append(nn.Sequential(
+                nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=(2,1,1), dilation=(2,1,1), groups=G, bias=False),
+                nn.BatchNorm3d(mid_planes),
+                nn.ReLU(inplace=False)
+                ))
+
+        # ---------------------- END -------------------- 
+        """
         for i in range(M):
             self.convs.append(nn.Sequential(
                 nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=1+i, dilation=1+i, groups=G, bias=False),
                 nn.BatchNorm3d(mid_planes),
                 nn.ReLU(inplace=False)
             ))
+        """
         self.gap = nn.AdaptiveAvgPool3d(1)
         self.fc = nn.Sequential(nn.Conv3d(mid_planes, d, kernel_size=1, stride=1, bias=False),
                                 nn.BatchNorm3d(d),
@@ -62,7 +97,7 @@ class SKConv(nn.Module):
         #feats = feats.view(batch_size, self.M, self.mid_planes, -1,-1,-1)
         
         #feats_U = torch.sum(feats, dim=1)
-        feats_U = feats[0]#hard-coding (M=2)
+        feats_U = feats[0]  #hard-coding (M=2)
         for i in range(1, self.M):
             feats_U += feats[i]   
 

@@ -99,13 +99,15 @@ def get_train_utils(opt, model_parameters):
         train_sampler = None
 
     # loader
+    print("Is shuffle", (train_sampler is None))
     train_loader = torch.utils.data.DataLoader(train_data,
                                                batch_size=opt.batch_size,
                                                shuffle=(train_sampler is None),
                                                num_workers=opt.n_threads,
                                                pin_memory=True,
                                                sampler=train_sampler,
-                                               worker_init_fn=worker_init_fn)
+                                               worker_init_fn=worker_init_fn,
+                                               drop_last=True)
 
     if opt.is_master_node:
         train_logger = Logger(opt.result_path / 'train.log',

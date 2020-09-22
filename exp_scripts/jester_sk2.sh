@@ -8,10 +8,10 @@ pre_path=' '  #'--pretrain_path results/mit_sknet26_M2__save_6.pth --n_pretrain_
 resume_path=' '
 root_path='./'
 annotation_path='./'
-video_path='../../../NAS/DATA2/jester'
+video_path='../../../raid/jester'
 
 model=sknet   #resnet  sknet... 
-depth=(26)  # 50 101
+depth=(50)  # 50 101
 M=2
 
 batch_size=128
@@ -26,6 +26,6 @@ learning_rate=0.1
 
 i=0
 for i in "${!depth[@]}"; do
-    CUDA_VISIBLE_DEVICES=4,5,6,7 python main.py $resume_path $pre_path --learning_rate $learning_rate --n_epochs $n_epochs --M $M --root_path $root_path --annotation_path $annotation_path --video_path $video_path --sample_duration $sample_duration --result_path results  --dataset $dataset --n_classes $n_classes --ft_begin_module fc --model $model --model_depth ${depth[$i]} --batch_size $batch_size --n_threads 4 --checkpoint $checkpoint > logs/sknet_$M$dataset$model${depth[$i]}$i.txt
+    CUDA_VISIBLE_DEVICES=4,5,6 python main.py $resume_path $pre_path --learning_rate $learning_rate --n_epochs $n_epochs --M $M --root_path $root_path --annotation_path $annotation_path --video_path $video_path --sample_duration $sample_duration --result_path results  --dataset $dataset --n_classes $n_classes --ft_begin_module fc --model $model --model_depth ${depth[$i]} --batch_size $batch_size --n_threads 4 --checkpoint $checkpoint > logs/sknet_$M$dataset$model${depth[$i]}$i.txt
 done
 #    CUDA_VISIBLE_DEVICES=4,5,6,7 python main.py --root_path $root_path --annotation_path $annotation_path --video_path $video_path --sample_duration $sample_duration --result_path results  --dataset $dataset --n_classes $n_classes ${pre_path[$i]} --ft_begin_module fc --model resnet --model_depth ${depth[$i]} --batch_size $batch_size --n_threads 4 --checkpoint 5 #> jig_tmp$i.txt

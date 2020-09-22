@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from models import resnet, resnet2p1d, resnext, sknet_3d
+from models import resnet, resnet2p1d, resnext, sknet_3d, sknet_3d_t
 
 
 def get_module_name(name):
@@ -34,7 +34,7 @@ def get_fine_tuning_parameters(model, ft_begin_module):
 
 def generate_model(opt):
     assert opt.model in [
-        'sknet', 'resnet', 'resnet2p1d', 'resnext'  #sknet will be added here
+        'sknet', 'resnet', 'resnet2p1d', 'resnext', 'sknet2'  #sknet will be added here
     ]
 
     if opt.model == 'resnet':
@@ -66,6 +66,17 @@ def generate_model(opt):
                                        no_max_pool=opt.no_max_pool)
     elif opt.model == 'sknet':
         model = sknet_3d.generate_model(model_depth=opt.model_depth,
+                                       M=opt.M,
+                                       #cardinality=opt.resnext_cardinality,
+                                       n_classes=opt.n_classes,
+                                       n_input_channels=opt.n_input_channels,
+                                       shortcut_type=opt.resnet_shortcut,
+                                       conv1_t_size=opt.conv1_t_size,
+                                       conv1_t_stride=opt.conv1_t_stride,
+                                       no_max_pool=opt.no_max_pool)
+                                      #widen_factor=opt.resnet_widen_factor)
+    elif opt.model == 'sknet2':
+        model = sknet_3d_t.generate_model(model_depth=opt.model_depth,
                                        M=opt.M,
                                        #cardinality=opt.resnext_cardinality,
                                        n_classes=opt.n_classes,

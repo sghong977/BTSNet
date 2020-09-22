@@ -6,7 +6,7 @@ To this end, read CSV and count segments are needed beforehand.
 """
 
 
-path = '../../../../NAS/DATA2/jester/'
+path = '../../../../raid/jester/'
 
 import csv 
 import os
