@@ -1,9 +1,11 @@
+#---------- copy and paste this code to _t
 import torch
 from torch import nn
 
 #from thop import profile
 #from thop import clever_format
 
+attns = list()
 
 """
 1 : nn.Conv3d(in_planes,out_planes,kernel_size=1,stride=stride,bias=False)
@@ -85,8 +87,7 @@ class SKConv(nn.Module):
         """
         self.softmax = nn.Softmax(dim=1)
         
-    def forward(self, x):
-        
+    def forward(self, x):        
         batch_size = x.shape[0]
 
 
@@ -113,8 +114,17 @@ class SKConv(nn.Module):
         #---------- Selection
         #feats_V = torch.sum(torch.FloatTensor(feats) * attention_vectors, dim=1)
         attention_vectors = list(attention_vectors.chunk(self.M, dim=1))  # split to a and b   chunk为pytorch方法，将tensor按照指定维度切分成 几个tensor块
+        global attns
+        
+        attns.append([torch.squeeze(attention_vectors[0]).cpu().numpy(),
+            torch.squeeze(attention_vectors[1]).cpu().numpy(),
+            torch.squeeze(attention_vectors[2]).cpu().numpy(),
+            torch.squeeze(attention_vectors[3]).cpu().numpy(),
+            ])
+                
         attention_vectors = list(map(lambda x: torch.squeeze(x,dim=1), attention_vectors))
         
+
         # (M, batch_size, *)
 
         fV = list(map(lambda x, y: x * y, attention_vectors, feats))
@@ -257,6 +267,7 @@ class SKNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        global attns
         fea = self.basic_conv(x)
         fea = self.maxpool(fea)
         fea = self.stage_1(fea)
@@ -266,7 +277,7 @@ class SKNet(nn.Module):
         fea = self.gap(fea)
         fea = torch.squeeze(fea)
         fea = self.classifier(fea)
-        return fea
+        return fea, attns
 
 #generate model
 #model = ResNeXt(ResNeXtBottleneck, [3, 24, 36, 3], get_inplanes(), **kwargs)

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 """
 1. Entire Train/Validaion Accuray Graph
 2. Comparison of M size (plot 26, 50, 101 separately)
-3. Comparison of Layer size (plot M=2, 3 separately)
+3. Comparison of Layer size (plot M=2, 3, 4 separately)
 * resnet baseline should be plotted for comparison
 """
 
@@ -14,21 +14,27 @@ titles = ['Entire Accuracy',
             'Comparison of Layer depth on SKNet M=2',
             'Comparison of Layer depth on SKNet M=3',
             ]
-indices = [[0,1,2,3,4,5,6,7],  #1
-            [0,1,2,3],  #2
-            [0,1,4,5],
-            [0,1,6,7],
+indices = [[0,1,2,3,4,5,6,7,8,9,10],  #1
+            [0,1,2,3,8],  #2
+            [0,1,4,5, 9],
+            [0,1,6,7, 10],
             [0,1,2,4,6], #3
-            [0,1,3,5,7]
+            [0,1,3,5,7],
+            [0,1,8,9,10]
             ]
 fnames = ['hmdb51_resnet50_M2_20200911-202451',
           'hmdb51_resnet101_M2_20200912-150219',
           'hmdb51_sknet26_M2_20200911-214316',
           'hmdb51_sknet26_M3_20200911-231448',
+
           'hmdb51_sknet50_M2_20200912-183445',
           'hmdb51_sknet50_M3_20200912-224731',
           'hmdb51_sknet101_M2_20200913-164034',
           'hmdb51_sknet101_M3_20200913-215856',
+
+          'hmdb51_sknet226_M4_20200925-185718',
+          'hmdb51_sknet250_M4_20200926-083813',
+          'hmdb51_sknet2101_M4_20200927-010416',
           ]
 #['ucf101_20200904-033403']
 flabels = ['ResNet-50',
@@ -38,7 +44,10 @@ flabels = ['ResNet-50',
             'SKNet-50-M2',
             'SKNet-50-M3',
             'SKNet-101-M2',
-            'SKNet-101-M3'
+            'SKNet-101-M3',
+            'SKNet-26-M4',
+            'SKNet-50-M4',
+            'SKNet-101-M4',
             ]
 
 
@@ -66,7 +75,7 @@ for j in range(len(fnames)):
 
 
 #------------------- plot ------------------------
-colors = ['red',  'blue', 'black', 'grey', 'purple', 'green', 'cyan', 'magenta']
+colors = ['red',  'blue', 'black', 'grey', 'purple', 'green', 'cyan', 'magenta', 'orange', 'pink', 'yellow']
 lstyle=['-', '-.', '--', '.']
 
 # to plot each setting
@@ -75,7 +84,7 @@ for i in range(len(titles)):
     plt.figure(figsize=(5,5))
     plt.title(titles[i]+ " (train)")
     for j in range(len(indices[i])):
-        x = [k for k in range(1,len(train_acc[i])+1)]
+        x = [k for k in range(1,len(train_acc[indices[i][j]])+1)]
         plt.plot(x, train_acc[indices[i][j]], label=flabels[indices[i][j]], alpha=1., linestyle=lstyle[0], color=colors[j])
     plt.grid()
     plt.legend()
@@ -86,7 +95,7 @@ for i in range(len(titles)):
     plt.figure(figsize=(5,5))
     plt.title(titles[i]+ " (validation)")
     for j in range(len(indices[i])):
-        x = [k for k in range(1,len(train_acc[i])+1)]
+        x = [k for k in range(1,len(val_acc[indices[i][j]])+1)]
         plt.plot(x, val_acc[indices[i][j]], label=flabels[indices[i][j]], alpha=1., linestyle=lstyle[0], color=colors[j])
     plt.grid()
     plt.legend()

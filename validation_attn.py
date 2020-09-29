@@ -9,6 +9,34 @@ from utils import AverageMeter, calculate_accuracy
 
 
 import matplotlib.pyplot as plt
+#if visualize
+# attn here
+# attns [# of SKConv][M][batch_size][channels]
+def plot_attns(attns):
+    title = "Jester_M4_ep100"
+    B = len(attns)
+    M = len(attns[0])
+    batch = len(attns[0][0])
+    colors = ['red',  'blue', 'purple', 'green']
+    fig, axs = plt.subplots(B//4 + B%4 ,4,figsize=(B*2,B))    
+    for b in range(B):
+        for m in range(M):
+            for bat in range(batch):
+                axs[b//4, b%4].set_title("Attention in Block" + str(b) + " M" + str(M))
+                y = [m for i in range(len(attns[b][m][bat]))]
+                axs[b//4, b%4].scatter(attns[b][m][bat], y, c=colors[m], alpha=0.1)
+    plt.savefig("result_attns/"+title+"Attn.png")
+    
+    # for one data
+    bat = 15
+    fig, axs = plt.subplots(B//4 + B%4 ,4,figsize=(B*2,B))
+    for b in range(B):
+        axs[b//4, b%4].set_title(video_ids[bat]+"Attention in Block" + str(b) + " M" + str(M))
+        for m in range(M):
+            y = [m for i in range(len(attns[b][m][bat]))]
+            axs[b//4, b%4].scatter(attns[b][m][bat], y, c=colors[m], alpha=0.1)
+    plt.savefig("result_attns/"+title+"One_Attn.png")
+#        plt.savefig("Attn_b"+str(b)+"_batch"+str(batch)+".png")
 
 def val_epoch(epoch,
               data_loader,
@@ -33,9 +61,12 @@ def val_epoch(epoch,
         for i, (inputs, targets) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
             inputs = inputs.cuda()     # remove this!
+            # get name
+            #video_ids, segments = zip(*targets)
             
             targets = targets.to(device, non_blocking=True)
-            outputs = model(inputs)
+            outputs, attns = model(inputs)
+            print(len(attns))
             
             loss = criterion(outputs, targets)
             acc = calculate_accuracy(outputs, targets)
@@ -58,6 +89,11 @@ def val_epoch(epoch,
                       data_time=data_time,
                       loss=losses,
                       acc=accuracies))
+
+            # if visualize, break here.
+            plot_attns(attns, video_ids)
+            break
+
 
     if distributed:
         loss_sum = torch.tensor([losses.sum],

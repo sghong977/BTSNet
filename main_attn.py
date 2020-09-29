@@ -26,8 +26,8 @@ from temporal_transforms import (LoopPadding, TemporalRandomCrop,
 from temporal_transforms import Compose as TemporalCompose
 from dataset import get_training_data, get_validation_data, get_inference_data
 from utils import Logger, worker_init_fn, get_lr
-from training import train_epoch
-from validation import val_epoch
+from training_attn import train_epoch
+from validation_attn import val_epoch
 import inference
 
 import time
@@ -320,6 +320,7 @@ def main_worker(index, opt):
     info = opt.dataset + "_" + opt.model + str(opt.model_depth) + '_M' + str(opt.M) + '_'    ###
     print(info)
 
+    print("For extracting attention")
     if not opt.no_train:
         (train_loader, train_sampler, train_logger, train_batch_logger,
          optimizer, scheduler) = get_train_utils(opt, parameters)
@@ -370,6 +371,8 @@ def main_worker(index, opt):
             print("Validation Accuracy : ", prev_val_acc, ", Loss : ", prev_val_loss)
             val_acc_log.append(prev_val_acc)
             
+            # if attn extract
+            break
 
         if not opt.no_train and opt.lr_scheduler == 'multistep':
             scheduler.step()
@@ -385,22 +388,7 @@ def main_worker(index, opt):
         inference.inference(inference_loader, model, inference_result_path,
                             inference_class_names, opt.inference_no_average,
                             opt.output_topk)
-    # save file
-    # if attn not extract
-    infoname = info + time.strftime("%Y%m%d-%H%M%S")
-
-    timestr = "./results/" + infoname
-    with open(timestr+'_val_acc.txt', 'w') as f:
-        for i in range(len(val_acc_log)):
-            f.write("%s " % round(val_acc_log[i],5))
-    with open(timestr+'_train_acc.txt', 'w') as f:
-        for i in range(len(acc_log)):
-            f.write("%s " % round(acc_log[i],5))
-    with open(timestr+'_loss.txt', 'w') as f:
-        for i in range(len(loss_log)):
-            f.write("%s " % round(loss_log[i],5))
-
-
+                            
 if __name__ == '__main__':
     opt = get_opt()
 
