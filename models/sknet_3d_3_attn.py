@@ -1,9 +1,11 @@
+#---------- copy and paste this code to _t
 import torch
 from torch import nn
 
 #from thop import profile
 #from thop import clever_format
 
+attns = list()
 
 """
 1 : nn.Conv3d(in_planes,out_planes,kernel_size=1,stride=stride,bias=False)
@@ -26,6 +28,9 @@ class SKConv(nn.Module):
     # features = mid_planes
     def __init__(self, mid_planes, M=2, G=32, r=16, stride=1 ,L=32):
         super(SKConv, self).__init__()
+        self.t_dict = {128:15, 256:8, 512:4, 1024:2}
+        self.t_size = self.t_dict[mid_planes]
+
         d = max(int(mid_planes/r), L)
         self.M = M
         self.mid_planes = mid_planes
@@ -61,12 +66,6 @@ class SKConv(nn.Module):
                 nn.BatchNorm3d(mid_planes),
                 nn.ReLU(inplace=False)
                 ))
-        if M > 4 :
-            self.convs.append(nn.Sequential(
-                nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=(2,1,1), dilation=(2,1,1), groups=G, bias=False),
-                nn.BatchNorm3d(mid_planes),
-                nn.ReLU(inplace=False)
-                ))
 
         # ---------------------- END -------------------- 
         """
@@ -77,7 +76,7 @@ class SKConv(nn.Module):
                 nn.ReLU(inplace=False)
             ))
         """
-        self.gap = nn.AdaptiveAvgPool3d(1)
+        self.gap = nn.AdaptiveAvgPool3d((self.t_size,1,1))
         self.fc = nn.Sequential(nn.Conv3d(mid_planes, d, kernel_size=1, stride=1, bias=False),
                                 nn.BatchNorm3d(d),
                                 nn.ReLU(inplace=False))
@@ -91,39 +90,38 @@ class SKConv(nn.Module):
         """
         self.softmax = nn.Softmax(dim=1)
         
-    def forward(self, x):
-        
+    def forward(self, x):        
         batch_size = x.shape[0]
 
 
         feats = [conv(x) for conv in self.convs]   
-#        print("after conv", feats[0].shape)
-        #print(feats[0].shape)   
-
-        #feats = torch.cat(feats, dim=1)
-        #feats = feats.view(batch_size, self.M, self.mid_planes, -1,-1,-1)
-        
-        #feats_U = torch.sum(feats, dim=1)
         feats_U = feats[0]  #hard-coding (M=2)
         for i in range(1, self.M):
             feats_U += feats[i]   
 
         feats_S = self.gap(feats_U)
-#        print("after gap", feats_S.shape)
         feats_Z = self.fc(feats_S)
-#        print("after fc", feats_Z.shape)
 
         #attention_vectors = [fc(feats_Z) for fc in self.fcs]
         attention_vectors = self.fcs(feats_Z)
         #attention_vectors = torch.cat(attention_vectors, dim=1)
-        attention_vectors = attention_vectors.view(batch_size, self.M, self.mid_planes, 1, 1, 1)
+        attention_vectors = attention_vectors.view(batch_size, self.M, self.mid_planes, self.t_size, 1, 1)
         attention_vectors = self.softmax(attention_vectors)
         
         #---------- Selection
         #feats_V = torch.sum(torch.FloatTensor(feats) * attention_vectors, dim=1)
         attention_vectors = list(attention_vectors.chunk(self.M, dim=1))  # split to a and b   chunk为pytorch方法，将tensor按照指定维度切分成 几个tensor块
+        global attns
+        
+        attns.append([torch.squeeze(attention_vectors[0]).cpu().numpy(),
+            torch.squeeze(attention_vectors[1]).cpu().numpy(),
+            torch.squeeze(attention_vectors[2]).cpu().numpy(),
+            torch.squeeze(attention_vectors[3]).cpu().numpy(),
+            ])
+                
         attention_vectors = list(map(lambda x: torch.squeeze(x,dim=1), attention_vectors))
         
+
         # (M, batch_size, *)
 
         fV = list(map(lambda x, y: x * y, attention_vectors, feats))
@@ -266,6 +264,7 @@ class SKNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
+        global attns
         fea = self.basic_conv(x)
         fea = self.maxpool(fea)
         fea = self.stage_1(fea)
@@ -275,7 +274,7 @@ class SKNet(nn.Module):
         fea = self.gap(fea)
         fea = torch.squeeze(fea)
         fea = self.classifier(fea)
-        return fea
+        return fea, attns
 
 #generate model
 #model = ResNeXt(ResNeXtBottleneck, [3, 24, 36, 3], get_inplanes(), **kwargs)

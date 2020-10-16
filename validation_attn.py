@@ -9,6 +9,41 @@ from utils import AverageMeter, calculate_accuracy
 
 
 import matplotlib.pyplot as plt
+import numpy as np
+
+# THIS IS TEMPORAL & CHANNEL ATTENTION (if visualize)
+# attn here
+# attns [# of SKConv][M][batch_size][channels][TEMPORAL]
+def plot_attns_temporal(attns):
+    title = "UCF_M4_ep200_temporal"
+    B = len(attns)
+    M = len(attns[0])
+    batch = 1 #len(attns[0][0])
+    colors = ['red',  'blue', 'purple', 'green']
+    fig, axs = plt.subplots(B//4 + B%4 ,4,figsize=(B*2,B))    
+    for b in range(B):
+        for m in range(M):
+            for bat in range(batch):
+                for tp in range(len(attns[b][m][bat][0])):
+                    tmp = np.asarray(attns[b][m][bat])
+                    y = [tp for i in range(len(tmp))]
+                    tmp = np.transpose(tmp)    # [TEMPORAL][CHANNEL]
+                    axs[b//4, b%4].set_title("Attention in Block" + str(b))
+                    axs[b//4, b%4].scatter(tmp[tp], y, c=colors[m], alpha=0.3)
+    plt.savefig("result_attns/"+title+"Attn.png")
+    
+    # for one data
+    bat = 15
+    fig, axs = plt.subplots(B//4 + B%4 ,4,figsize=(B*2,B))
+    for b in range(B):
+        axs[b//4, b%4].set_title(video_ids[bat]+"Attention in Block" + str(b) + " M" + str(M))
+        for m in range(M):
+            y = [m for i in range(len(attns[b][m][bat]))]
+            axs[b//4, b%4].scatter(attns[b][m][bat], y, c=colors[m], alpha=0.1)
+    plt.savefig("result_attns/"+title+"One_Attn.png")
+#        plt.savefig("Attn_b"+str(b)+"_batch"+str(batch)+".png")
+
+
 #if visualize
 # attn here
 # attns [# of SKConv][M][batch_size][channels]
@@ -91,7 +126,8 @@ def val_epoch(epoch,
                       acc=accuracies))
 
             # if visualize, break here.
-            plot_attns(attns, video_ids)
+            #plot_attns(attns, video_ids)
+            plot_attns_temporal(attns)
             break
 
 

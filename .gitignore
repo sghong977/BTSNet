@@ -2,6 +2,7 @@
 logs/
 pretrained/
 results/*.pth
+olds/
 
 #-----------------
 # Byte-compiled / optimized / DLL files

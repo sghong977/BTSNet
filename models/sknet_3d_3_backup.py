@@ -26,10 +26,21 @@ class SKConv(nn.Module):
     # features = mid_planes
     def __init__(self, mid_planes, M=2, G=32, r=16, stride=1 ,L=32):
         super(SKConv, self).__init__()
+        self.t_dict = {128:15, 256:8, 512:4, 1024:2}
+        self.t_size = self.t_dict[mid_planes]
+        
         d = max(int(mid_planes/r), L)
         self.M = M
         self.mid_planes = mid_planes
         self.convs = nn.ModuleList([])
+
+        padding = [[None], [None], # M=0 and 1
+            [(4,1,1)], # M=2
+            [(4,1,1), (1,4,4)], # M=3
+            [(4,4,4), (1,4,4), (4,1,1)],  # M=4
+            [None],[None], #M=5,6
+            [(3,3,3), (5,5,5), (1,3,3), (1,5,5), (3,1,1), (5,1,1)] #M=7
+        ]
 
         # manipulate candidates here ------------------
         # dilation & padding 2 = kernel 5*5 (3=7*7, 4=9*9, 5=11*11)
@@ -40,34 +51,12 @@ class SKConv(nn.Module):
             nn.BatchNorm3d(mid_planes),
             nn.ReLU(inplace=False)
         ))
-        # M = 2
-        if M > 1:
+        for i in range(M-1):
             self.convs.append(nn.Sequential(
-                nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=(4,4,4), dilation=(4,4,4), groups=G, bias=False),
+                nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=padding[M][i], dilation=padding[M][i], groups=G, bias=False),
                 nn.BatchNorm3d(mid_planes),
                 nn.ReLU(inplace=False)
                 ))
-        # M = 3
-        if M > 2 :
-            self.convs.append(nn.Sequential(
-                nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=(1,2,2), dilation=(1,2,2), groups=G, bias=False),
-                nn.BatchNorm3d(mid_planes),
-                nn.ReLU(inplace=False)
-                ))
-        # M = 4
-        if M > 3 :
-            self.convs.append(nn.Sequential(
-                nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=(2,1,1), dilation=(2,1,1), groups=G, bias=False),
-                nn.BatchNorm3d(mid_planes),
-                nn.ReLU(inplace=False)
-                ))
-        if M > 4 :
-            self.convs.append(nn.Sequential(
-                nn.Conv3d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=(2,1,1), dilation=(2,1,1), groups=G, bias=False),
-                nn.BatchNorm3d(mid_planes),
-                nn.ReLU(inplace=False)
-                ))
-
         # ---------------------- END -------------------- 
         """
         for i in range(M):
@@ -77,7 +66,7 @@ class SKConv(nn.Module):
                 nn.ReLU(inplace=False)
             ))
         """
-        self.gap = nn.AdaptiveAvgPool3d(1)
+        self.gap = nn.AdaptiveAvgPool3d((self.t_size,1,1))
         self.fc = nn.Sequential(nn.Conv3d(mid_planes, d, kernel_size=1, stride=1, bias=False),
                                 nn.BatchNorm3d(d),
                                 nn.ReLU(inplace=False))
@@ -95,29 +84,23 @@ class SKConv(nn.Module):
         
         batch_size = x.shape[0]
 
-
         feats = [conv(x) for conv in self.convs]   
-#        print("after conv", feats[0].shape)
-        #print(feats[0].shape)   
-
-        #feats = torch.cat(feats, dim=1)
-        #feats = feats.view(batch_size, self.M, self.mid_planes, -1,-1,-1)
-        
-        #feats_U = torch.sum(feats, dim=1)
-        feats_U = feats[0]  #hard-coding (M=2)
+        #print("after conv", feats[0].shape)
+        feats_U = feats[0] 
         for i in range(1, self.M):
             feats_U += feats[i]   
 
         feats_S = self.gap(feats_U)
-#        print("after gap", feats_S.shape)
+        #print("after gap", feats_S.shape)
         feats_Z = self.fc(feats_S)
-#        print("after fc", feats_Z.shape)
+        #print("after fc", feats_Z.shape)
 
         #attention_vectors = [fc(feats_Z) for fc in self.fcs]
         attention_vectors = self.fcs(feats_Z)
         #attention_vectors = torch.cat(attention_vectors, dim=1)
-        attention_vectors = attention_vectors.view(batch_size, self.M, self.mid_planes, 1, 1, 1)
+        attention_vectors = attention_vectors.view(batch_size, self.M, self.mid_planes, self.t_size, 1, 1)
         attention_vectors = self.softmax(attention_vectors)
+        #print("attention extracted", attention_vectors.shape)
         
         #---------- Selection
         #feats_V = torch.sum(torch.FloatTensor(feats) * attention_vectors, dim=1)
@@ -126,11 +109,11 @@ class SKConv(nn.Module):
         
         # (M, batch_size, *)
 
+        #print("feat and attn final",feats[0].shape, attention_vectors[0].shape)
         fV = list(map(lambda x, y: x * y, attention_vectors, feats))
         feats_V = fV[0]
         for i in range(1, self.M):
             feats_V += fV[i]
-        #print(feats_V.shape)
 
         return feats_V
 

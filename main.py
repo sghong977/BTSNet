@@ -137,7 +137,7 @@ def get_train_utils(opt, model_parameters):
             optimizer, 'min', patience=opt.plateau_patience)
     else:
         scheduler = lr_scheduler.MultiStepLR(optimizer, opt.multistep_milestones)
-
+    print(scheduler)
     return (train_loader, train_sampler, train_logger, train_batch_logger, optimizer, scheduler)
 
 
@@ -164,7 +164,7 @@ def resume_train_utils(resume_path, begin_epoch, optimizer, scheduler):
         optimizer.load_state_dict(checkpoint['optimizer'])
     if scheduler is not None and 'scheduler' in checkpoint:
         scheduler.load_state_dict(checkpoint['scheduler'])
-
+    
     return begin_epoch, optimizer, scheduler
 
 def get_val_utils(opt):
