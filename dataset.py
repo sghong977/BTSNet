@@ -36,7 +36,7 @@ def get_training_data(video_path,
                       target_transform=None,
                       ):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester', 'charades', 'SVW', 'hollywood2'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -97,6 +97,19 @@ def get_training_data(video_path,
                                      target_transform=target_transform,
                                      video_loader=loader,
                                      video_path_formatter=video_path_formatter)
+    # different path (w/o label folder)
+    elif dataset_name in ['charades', 'hollywood2']:
+        video_path_formatter = (
+            lambda root_path, label, video_id: root_path / video_id)  #
+        training_data = VideoDataset(video_path,
+                                     annotation_path,
+                                     'training',
+                                     data_name=dataset_name,
+                                     spatial_transform=spatial_transform,
+                                     temporal_transform=temporal_transform,
+                                     target_transform=target_transform,
+                                     video_loader=loader,
+                                     video_path_formatter=video_path_formatter)
     else:
         training_data = VideoDataset(video_path,
                                      annotation_path,
@@ -120,7 +133,7 @@ def get_validation_data(video_path,
                         temporal_transform=None,
                         target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester', 'charades', 'SVW', 'hollywood2'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -174,6 +187,21 @@ def get_validation_data(video_path,
             target_transform=target_transform,
             video_loader=loader,
             video_path_formatter=video_path_formatter)        
+    # different path : w/o label
+    elif dataset_name == ['charades', 'hollywood2']:
+        video_path_formatter = (
+            lambda root_path, label, video_id: root_path / video_id)  #
+
+        validation_data = VideoDatasetMultiClips(
+            video_path,
+            annotation_path,
+            'validation',
+            data_name=dataset_name,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            video_loader=loader,
+            video_path_formatter=video_path_formatter)        
     else:
         validation_data = VideoDatasetMultiClips(
             video_path,
@@ -188,7 +216,7 @@ def get_validation_data(video_path,
 
     return validation_data, collate_fn
 
-
+# different scenario when charades or hollywood2
 def get_inference_data(video_path,
                        annotation_path,
                        dataset_name,
@@ -199,7 +227,7 @@ def get_inference_data(video_path,
                        temporal_transform=None,
                        target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'charades', 'SVW', 'hollywood2'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']

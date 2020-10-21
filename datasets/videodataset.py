@@ -26,6 +26,23 @@ def get_class_labels(data, data_name, root_path):
             if not tmp: break
             class_labels_map[tmp[:-1]] = i    # remove '\n'
             i += 1
+    elif data_name == 'charades':
+        f = open(root_path / 'Charades_v1_classes.txt', 'r')
+        i = 0
+        while True:
+            tmp = f.readline()
+            if not tmp: break
+            class_labels_map[tmp[5:-1]] = i    # remove '\n' and 'cxxx '
+            i += 1
+    elif data_name in ['SVW', 'hollywood2']:
+        f = open(root_path / 'list.txt', 'r')
+        i = 0
+        while True:
+            tmp = f.readline()
+            if not tmp: break
+            class_labels_map[tmp[:-1]] = i
+            i += 1
+
     # for other datasets
     else:
         index = 0
@@ -60,6 +77,33 @@ def get_database(data, subset, root_path, video_path_formatter, data_name):
                 # key
                 video_ids.append(row[0])  # only file name
                 video_paths.append(root_path / '20bn-jester-v1' / row[0])
+                annotations.append(row[1])
+                segments.append(int(row[2]))
+    elif data_name == 'charades':
+        with open('charades_'+ subset +'Set.csv', newline='') as csvfile:
+            train_reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+            for row in train_reader:
+                # key
+                video_ids.append(row[0])  # only file name
+                video_paths.append(root_path / 'cut' / row[0])
+                annotations.append(row[1])
+                segments.append(int(row[2]))
+    elif data_name == 'SVW':
+        with open('SVW_'+ subset +'Set.csv', newline='') as csvfile:
+            train_reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+            for row in train_reader:
+                # key
+                video_ids.append(row[0])  # only file name
+                video_paths.append(root_path / 'cut' / row[1] / row[0])
+                annotations.append(row[1])
+                segments.append(int(row[2]))
+    elif data_name == 'hollywood2':
+        with open('holly_'+ subset +'Set.csv', newline='') as csvfile:
+            train_reader = csv.reader(csvfile, delimiter=',')
+            for row in train_reader:
+                # key
+                video_ids.append(row[0])  # only file name
+                video_paths.append(root_path / 'cut' / row[0])
                 annotations.append(row[1])
                 segments.append(int(row[2]))
     else:
@@ -114,7 +158,7 @@ class VideoDataset(data.Dataset):
                        video_path_formatter):
         # if 'mit', 'data' doesnt exist
         data = None
-        if self.data_name not in ['mit', 'jester']:
+        if self.data_name not in ['mit', 'jester', 'charades', 'SVW', 'hollywood2']:
             with annotation_path.open('r') as f:
                 data = json.load(f)
         video_ids, video_paths, annotations, segments = get_database(
@@ -134,7 +178,7 @@ class VideoDataset(data.Dataset):
 
             #no 'label' in mit.
             # we don't habve 'test'set in Mit dataset.
-            if self.data_name == 'mit':
+            if self.data_name in ['mit', 'charades', 'SVW', 'hollywood2']:
                 label = annotations[i]
                 label_id = class_to_idx[label]
                 # segment : 
