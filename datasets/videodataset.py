@@ -87,7 +87,7 @@ def get_database(data, subset, root_path, video_path_formatter, data_name):
                 video_ids.append(row[0])  # only file name
                 video_paths.append(root_path / 'cut' / row[0])
                 annotations.append(row[1])
-                segments.append(int(row[2]))
+                segments.append([int(row[2]), int(row[3])])    # for train/validation (inference)
     elif data_name == 'SVW':
         with open('SVW_'+ subset +'Set.csv', newline='') as csvfile:
             train_reader = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -121,6 +121,13 @@ def get_database(data, subset, root_path, video_path_formatter, data_name):
 
     return video_ids, video_paths, annotations, segments
 
+# for inference (charades)
+def get_database_inference(data, subset, root_path, video_path_formatter, data_name):
+    video_ids = []
+    video_paths = []
+    annotations = []
+    segments = []
+    return video_ids, video_paths, annotations, segments
 
 class VideoDataset(data.Dataset):
 
@@ -178,7 +185,7 @@ class VideoDataset(data.Dataset):
 
             #no 'label' in mit.
             # we don't habve 'test'set in Mit dataset.
-            if self.data_name in ['mit', 'charades', 'SVW', 'hollywood2']:
+            if self.data_name in ['mit', 'SVW', 'hollywood2']:
                 label = annotations[i]
                 label_id = class_to_idx[label]
                 # segment : 
@@ -186,6 +193,14 @@ class VideoDataset(data.Dataset):
                 if segment[1] == 1:
                     continue
                 frame_indices = list(range(0, segments[i]))
+            # for charades && train/validation (except for inference)
+            # same as above one on inference scenario
+            elif self.data_name == 'charades':
+                label = annotations[i]
+                label_id = class_to_idx[label]
+                segment = segments[i]
+                frame_indices = list(range(segment[0], segment[1]))
+
             elif self.data_name == 'jester':
                 label = annotations[i]
                 label_id = class_to_idx[label]
@@ -206,7 +221,6 @@ class VideoDataset(data.Dataset):
                 segment = annotations[i]['segment']
                 if segment[1] == 1:
                     continue
-
                 frame_indices = list(range(segment[0], segment[1]))
 
             video_path = video_paths[i]
