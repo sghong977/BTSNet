@@ -4,6 +4,8 @@ from datasets.videodataset import VideoDataset
 from datasets.videodataset_multiclips import (VideoDatasetMultiClips,
                                               collate_fn)
 from datasets.activitynet import ActivityNet
+from datasets.hollywood2 import Hollywood2
+from datasets.charades import Charades
 from datasets.loader import VideoLoader, VideoLoaderHDF5, VideoLoaderFlowHDF5
 
 import torch
@@ -98,10 +100,22 @@ def get_training_data(video_path,
                                      video_loader=loader,
                                      video_path_formatter=video_path_formatter)
     # different path (w/o label folder)
-    elif dataset_name in ['charades', 'hollywood2']:
+    elif dataset_name == 'hollywood2':
         video_path_formatter = (
             lambda root_path, label, video_id: root_path / video_id)  #
-        training_data = VideoDataset(video_path,
+        training_data = Hollywood2(video_path,
+                                     annotation_path,
+                                     'training',
+                                     data_name=dataset_name,
+                                     spatial_transform=spatial_transform,
+                                     temporal_transform=temporal_transform,
+                                     target_transform=target_transform,
+                                     video_loader=loader,
+                                     video_path_formatter=video_path_formatter)
+    elif dataset_name == 'charades':
+        video_path_formatter = (
+            lambda root_path, label, video_id: root_path / video_id)  #
+        training_data = Charades(video_path,
                                      annotation_path,
                                      'training',
                                      data_name=dataset_name,
@@ -188,11 +202,25 @@ def get_validation_data(video_path,
             video_loader=loader,
             video_path_formatter=video_path_formatter)        
     # different path : w/o label
-    elif dataset_name == ['charades', 'hollywood2']:
+    elif dataset_name == 'hollywood2':
         video_path_formatter = (
             lambda root_path, label, video_id: root_path / video_id)  #
 
-        validation_data = VideoDatasetMultiClips(
+        validation_data = Hollywood2(
+            video_path,
+            annotation_path,
+            'validation',
+            data_name=dataset_name,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            video_loader=loader,
+            video_path_formatter=video_path_formatter)        
+    elif dataset_name == 'charades':
+        video_path_formatter = (
+            lambda root_path, label, video_id: root_path / video_id)  #
+
+        validation_data = Charades(
             video_path,
             annotation_path,
             'validation',
@@ -257,7 +285,8 @@ def get_inference_data(video_path,
     elif inference_subset == 'val':
         subset = 'validation'
     elif inference_subset == 'test':
-        subset = 'testing'
+        subset = 'inference'
+
     if dataset_name == 'activitynet':
         inference_data = ActivityNet(video_path,
                                      annotation_path,
@@ -268,16 +297,44 @@ def get_inference_data(video_path,
                                      video_loader=loader,
                                      video_path_formatter=video_path_formatter,
                                      is_untrimmed_setting=True)
-    else:
-        inference_data = VideoDatasetMultiClips(
+    elif dataset_name == 'hollywood2':
+        video_path_formatter = (
+            lambda root_path, video_id: root_path / video_id)  #
+        inference_data = Hollywood2(   #MultiClips
             video_path,
             annotation_path,
             subset,
+            data_name=dataset_name,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            video_loader=loader,
+            video_path_formatter=video_path_formatter)
+    elif dataset_name == 'charades':
+        loader = VideoLoader(image_name_formatter)
+        video_path_formatter = (
+            lambda root_path, video_id: root_path / video_id)  #
+        inference_data = Charades(   #MultiClips
+            video_path,
+            annotation_path,
+            subset,
+            data_name=dataset_name,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            video_loader=loader,
+            video_path_formatter=video_path_formatter)
+    else:
+        inference_data = VideoDataset(   #MultiClips
+            video_path,
+            annotation_path,
+            subset,
+            data_name=dataset_name,
             spatial_transform=spatial_transform,
             temporal_transform=temporal_transform,
             target_transform=target_transform,
             video_loader=loader,
             video_path_formatter=video_path_formatter,
-            target_type=['video_id', 'segment'])
+            target_type=['label'])
 
     return inference_data, collate_fn

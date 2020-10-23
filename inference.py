@@ -38,7 +38,8 @@ def inference(data_loader, model, result_path, class_names, no_average,
         for i, (inputs, targets) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
 
-            video_ids, segments = zip(*targets)
+            #video_ids, segments = zip(*targets)
+            print("this is targets", targets)
             outputs = model(inputs)
             outputs = F.softmax(outputs, dim=1).cpu()
 

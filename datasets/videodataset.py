@@ -4,6 +4,8 @@ from pathlib import Path
 
 import torch
 import torch.utils.data as data
+import numpy as np
+import math
 
 from .loader import VideoLoader
 
@@ -26,15 +28,7 @@ def get_class_labels(data, data_name, root_path):
             if not tmp: break
             class_labels_map[tmp[:-1]] = i    # remove '\n'
             i += 1
-    elif data_name == 'charades':
-        f = open(root_path / 'Charades_v1_classes.txt', 'r')
-        i = 0
-        while True:
-            tmp = f.readline()
-            if not tmp: break
-            class_labels_map[tmp[5:-1]] = i    # remove '\n' and 'cxxx '
-            i += 1
-    elif data_name in ['SVW', 'hollywood2']:
+    elif data_name in ['SVW']:
         f = open(root_path / 'list.txt', 'r')
         i = 0
         while True:
@@ -79,15 +73,6 @@ def get_database(data, subset, root_path, video_path_formatter, data_name):
                 video_paths.append(root_path / '20bn-jester-v1' / row[0])
                 annotations.append(row[1])
                 segments.append(int(row[2]))
-    elif data_name == 'charades':
-        with open('charades_'+ subset +'Set.csv', newline='') as csvfile:
-            train_reader = csv.reader(csvfile, delimiter=',', quotechar='|')
-            for row in train_reader:
-                # key
-                video_ids.append(row[0])  # only file name
-                video_paths.append(root_path / 'cut' / row[0])
-                annotations.append(row[1])
-                segments.append([int(row[2]), int(row[3])])    # for train/validation (inference)
     elif data_name == 'SVW':
         with open('SVW_'+ subset +'Set.csv', newline='') as csvfile:
             train_reader = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -95,15 +80,6 @@ def get_database(data, subset, root_path, video_path_formatter, data_name):
                 # key
                 video_ids.append(row[0])  # only file name
                 video_paths.append(root_path / 'cut' / row[1] / row[0])
-                annotations.append(row[1])
-                segments.append(int(row[2]))
-    elif data_name == 'hollywood2':
-        with open('holly_'+ subset +'Set.csv', newline='') as csvfile:
-            train_reader = csv.reader(csvfile, delimiter=',')
-            for row in train_reader:
-                # key
-                video_ids.append(row[0])  # only file name
-                video_paths.append(root_path / 'cut' / row[0])
                 annotations.append(row[1])
                 segments.append(int(row[2]))
     else:
@@ -119,14 +95,6 @@ def get_database(data, subset, root_path, video_path_formatter, data_name):
                     label = value['annotations']['label']
                     video_paths.append(video_path_formatter(root_path, label, key))
 
-    return video_ids, video_paths, annotations, segments
-
-# for inference (charades)
-def get_database_inference(data, subset, root_path, video_path_formatter, data_name):
-    video_ids = []
-    video_paths = []
-    annotations = []
-    segments = []
     return video_ids, video_paths, annotations, segments
 
 class VideoDataset(data.Dataset):
@@ -165,7 +133,7 @@ class VideoDataset(data.Dataset):
                        video_path_formatter):
         # if 'mit', 'data' doesnt exist
         data = None
-        if self.data_name not in ['mit', 'jester', 'charades', 'SVW', 'hollywood2']:
+        if self.data_name not in ['mit', 'jester', 'SVW']:
             with annotation_path.open('r') as f:
                 data = json.load(f)
         video_ids, video_paths, annotations, segments = get_database(
@@ -183,24 +151,13 @@ class VideoDataset(data.Dataset):
             if i % (n_videos // 5) == 0:
                 print('dataset loading [{}/{}]'.format(i, len(video_ids)))
 
-            #no 'label' in mit.
-            # we don't habve 'test'set in Mit dataset.
-            if self.data_name in ['mit', 'SVW', 'hollywood2']:
+            if self.data_name in ['mit', 'SVW']:
                 label = annotations[i]
                 label_id = class_to_idx[label]
-                # segment : 
                 segment = [0, segments[i]-1]
                 if segment[1] == 1:
                     continue
                 frame_indices = list(range(0, segments[i]))
-            # for charades && train/validation (except for inference)
-            # same as above one on inference scenario
-            elif self.data_name == 'charades':
-                label = annotations[i]
-                label_id = class_to_idx[label]
-                segment = segments[i]
-                frame_indices = list(range(segment[0], segment[1]))
-
             elif self.data_name == 'jester':
                 label = annotations[i]
                 label_id = class_to_idx[label]
@@ -250,7 +207,7 @@ class VideoDataset(data.Dataset):
     def __getitem__(self, index):
         path = self.data[index]['video']
         if isinstance(self.target_type, list):
-            target = [self.data[index][t] for t in self.target_type]
+            target = [self.data[index][t] for t in self.target_type]   # what?
         else:
             target = self.data[index][self.target_type]
 
