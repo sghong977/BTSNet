@@ -57,8 +57,10 @@ class Hollywood2(data.Dataset):
                  video_path_formatter=(lambda root_path, label, video_id:
                                        root_path / label / video_id),
                  image_name_formatter=lambda x: f'image_{x:05d}.jpg',
-                ):
+                 target_type = 'label'):
         self.subset = subset
+        self.target_type = target_type
+
         self.data_name = data_name
 
         self.data, self.class_names = self.__make_dataset(
@@ -98,7 +100,7 @@ class Hollywood2(data.Dataset):
                 label_list = label.split('|')
                 label_id = [class_to_idx[i] for i in label_list]
                 segment = segments[i]
-                tt = np.linspace(segment[0], segment[1], 30)
+                tt = np.linspace(segment[0], segment[1]-1, 30)    #
                 frame_indices = [math.floor(i) for i in tt]
             # train/validation
             else:
@@ -138,11 +140,10 @@ class Hollywood2(data.Dataset):
         target = self.data[index]['label']
 
         frame_indices = self.data[index]['frame_indices']
+
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
 
-        if self.subset == 'inference':
-            frame_indices = frame_indices[0]   # idk why
         clip = self.__loading(path, frame_indices)
 
         if self.target_transform is not None:
@@ -152,3 +153,103 @@ class Hollywood2(data.Dataset):
 
     def __len__(self):
         return len(self.data)
+
+#------------------------- For validation and Inference
+
+import json
+import copy
+import functools
+
+import torch
+
+from torch.utils.data.dataloader import default_collate
+
+def collate_fn(batch):
+    batch_clips, batch_targets = zip(*batch)
+
+    #batch_clips = [clip for multi_clips in batch_clips for clip in multi_clips]
+    #batch_targets = [
+    #    target for multi_targets in batch_targets for target in multi_targets
+    #]
+    
+    #print(len(batch_clips), batch_clips[0].shape)
+    target_element = batch_targets[0]
+    if isinstance(target_element, int) or isinstance(target_element, str):
+        return default_collate(batch_clips), default_collate(batch_targets)
+    else:
+        return default_collate(batch_clips), batch_targets
+
+def collate_fn_val(batch):
+    batch_clips, batch_targets = zip(*batch)
+    batch_clips = [clip for multi_clips in batch_clips for clip in multi_clips]
+    batch_targets = [
+        target for multi_targets in batch_targets for target in multi_targets
+    ]
+    
+    target_element = batch_targets[0]
+    if isinstance(target_element, int) or isinstance(target_element, str):
+        return default_collate(batch_clips), default_collate(batch_targets)
+    else:
+        return default_collate(batch_clips), batch_targets
+
+class Hollywood2MultiClips(Hollywood2):
+
+    def __loading__one(self, path, frame_indices):
+        clip = self.loader(path, frame_indices)
+        if self.spatial_transform is not None:
+            self.spatial_transform.randomize_parameters()
+            clip = [self.spatial_transform(img) for img in clip]
+        clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
+
+        return clip
+
+    def __loading(self, path, video_frame_indices):
+        clips = []
+        segments = []
+        for clip_frame_indices in video_frame_indices:
+            clip = self.loader(path, clip_frame_indices)
+            if self.spatial_transform is not None:
+                self.spatial_transform.randomize_parameters()
+                clip = [self.spatial_transform(img) for img in clip]
+            clips.append(torch.stack(clip, 0).permute(1, 0, 2, 3))
+            segments.append(
+                [min(clip_frame_indices),
+                 max(clip_frame_indices) + 1])
+
+        return clips, segments
+
+    def __getitem__(self, index):
+        path = self.data[index]['video']
+
+        video_frame_indices = self.data[index]['frame_indices']
+
+        if self.subset=='inference':
+            if self.temporal_transform is not None:
+                video_frame_indices = self.temporal_transform(video_frame_indices)
+            clips = self.__loading__one(path, video_frame_indices)
+        else:
+            if self.temporal_transform is not None:
+                video_frame_indices = self.temporal_transform(video_frame_indices)
+            clips, segments = self.__loading(path, video_frame_indices)
+
+        if isinstance(self.target_type, list):
+            targets = [self.data[index][t] for t in self.target_type]
+        else:
+            targets = self.data[index][self.target_type]
+        
+        if 'segment' in self.target_type:
+            if isinstance(self.target_type, list):
+                segment_index = self.target_type.index('segment')
+                targets = []
+                for s in segments:
+                    targets.append(copy.deepcopy(target))
+                    targets[-1][segment_index] = s
+            else:
+                targets = segments
+        # if inference, don't need eo expand to segments size
+        elif self.subset == 'inference':
+                pass
+        else:
+            targets = [targets for _ in range(len(segments))]
+        
+        return clips, targets

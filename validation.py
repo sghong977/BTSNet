@@ -32,11 +32,11 @@ def val_epoch(epoch,
     with torch.no_grad():
         for i, (inputs, targets) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
+            # if holly
             inputs = inputs.cuda()     # remove this!
-            
             targets = targets.to(device, non_blocking=True)
             outputs = model(inputs)
-            
+
             loss = criterion(outputs, targets)
             acc = calculate_accuracy(outputs, targets)
 

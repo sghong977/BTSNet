@@ -233,15 +233,17 @@ def get_inference_utils(opt):
     spatial_transform.extend([ScaleValue(opt.value_scale), normalize])
     spatial_transform = Compose(spatial_transform)
 
-
-    temporal_transform = []
-    if opt.sample_t_stride > 1:
-        temporal_transform.append(TemporalSubsampling(opt.sample_t_stride))
-    # sliding window?????!
-    temporal_transform.append(
-        SlidingWindow(opt.sample_duration, opt.inference_stride))
-    temporal_transform = TemporalCompose(temporal_transform)
-
+    # ------- edit here for other datasets
+    temporal_transform = None
+    #temporal_transform = []
+    #if opt.sample_t_stride > 1:
+    #    temporal_transform.append(TemporalSubsampling(opt.sample_t_stride))
+    # sliding window?????! we don't neet it when charades and holly2
+    #temporal_transform.append(
+    #    SlidingWindow(opt.sample_duration, opt.inference_stride))
+    #temporal_transform = TemporalCompose(temporal_transform)
+    #-----------------------------------------------
+    
     # get here
     inference_data, collate_fn = get_inference_data(opt.video_path, opt.annotation_path, opt.dataset, opt.input_type,
         opt.file_type, opt.inference_subset, spatial_transform, temporal_transform)

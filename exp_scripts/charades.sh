@@ -11,7 +11,7 @@ annotation_path='./'
 video_path='../../../raid/Charades'
 
 model=sknet3   #resnet  sknet... 
-depth=(50 26 101) 
+depth=(50) # 26 101) 
 M=4
 
 batch_size=32
@@ -26,6 +26,6 @@ learning_rate=0.01
 
 i=0
 for i in "${!depth[@]}"; do
-    CUDA_VISIBLE_DEVICES=7 python main.py --learning_rate $learning_rate $resume_path $pre_path --n_epochs $n_epochs --M $M --root_path $root_path --annotation_path $annotation_path --video_path $video_path --sample_duration $sample_duration --result_path results  --dataset $dataset --n_classes $n_classes --ft_begin_module fc --model $model --model_depth ${depth[$i]} --batch_size $batch_size --n_threads 4 --checkpoint $checkpoint > logs/sknet3_$M$dataset$model${depth[$i]}$i.txt
+    CUDA_VISIBLE_DEVICES=7 python main.py --learning_rate $learning_rate $resume_path $pre_path --n_epochs $n_epochs --M $M --root_path $root_path --annotation_path $annotation_path --video_path $video_path --sample_duration $sample_duration --result_path results  --dataset $dataset --n_classes $n_classes --ft_begin_module fc --model $model --model_depth ${depth[$i]} --batch_size $batch_size --n_threads 4 --checkpoint $checkpoint --no_train #> logs/sknet3_$M$dataset$model${depth[$i]}$i.txt
 done
 #    CUDA_VISIBLE_DEVICES=4,5,6,7 python main.py --root_path $root_path --annotation_path $annotation_path --video_path $video_path --sample_duration $sample_duration --result_path results  --dataset $dataset --n_classes $n_classes ${pre_path[$i]} --ft_begin_module fc --model resnet --model_depth ${depth[$i]} --batch_size $batch_size --n_threads 4 --checkpoint 5 #> jig_tmp$i.txt

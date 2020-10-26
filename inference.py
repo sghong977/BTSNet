@@ -43,11 +43,12 @@ def inference(data_loader, model, result_path, class_names, no_average,
             outputs = model(inputs)
             outputs = F.softmax(outputs, dim=1).cpu()
 
-            for j in range(outputs.size(0)):
-                results['results'][video_ids[j]].append({
-                    'segment': segments[j],
-                    'output': outputs[j]
-                })
+            print(outputs)
+            #for j in range(outputs.size(0)):
+            #    results['results'][video_ids[j]].append({
+            #        'segment': segments[j],
+            #        'output': outputs[j]
+            #    })
 
             batch_time.update(time.time() - end_time)
             end_time = time.time()

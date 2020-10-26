@@ -4,8 +4,8 @@ from datasets.videodataset import VideoDataset
 from datasets.videodataset_multiclips import (VideoDatasetMultiClips,
                                               collate_fn)
 from datasets.activitynet import ActivityNet
-from datasets.hollywood2 import Hollywood2
-from datasets.charades import Charades
+from datasets.hollywood2 import Hollywood2, Hollywood2MultiClips
+from datasets.charades import Charades, CharadesMultiClips
 from datasets.loader import VideoLoader, VideoLoaderHDF5, VideoLoaderFlowHDF5
 
 import torch
@@ -203,10 +203,13 @@ def get_validation_data(video_path,
             video_path_formatter=video_path_formatter)        
     # different path : w/o label
     elif dataset_name == 'hollywood2':
+        from datasets.hollywood2 import collate_fn_val
+        collate_fn = collate_fn_val
+
         video_path_formatter = (
             lambda root_path, label, video_id: root_path / video_id)  #
 
-        validation_data = Hollywood2(
+        validation_data = Hollywood2MultiClips(
             video_path,
             annotation_path,
             'validation',
@@ -220,7 +223,7 @@ def get_validation_data(video_path,
         video_path_formatter = (
             lambda root_path, label, video_id: root_path / video_id)  #
 
-        validation_data = Charades(
+        validation_data = CharadesMultiClips(
             video_path,
             annotation_path,
             'validation',
@@ -298,9 +301,10 @@ def get_inference_data(video_path,
                                      video_path_formatter=video_path_formatter,
                                      is_untrimmed_setting=True)
     elif dataset_name == 'hollywood2':
+        from datasets.hollywood2 import collate_fn
         video_path_formatter = (
             lambda root_path, video_id: root_path / video_id)  #
-        inference_data = Hollywood2(   #MultiClips
+        inference_data = Hollywood2MultiClips(   #MultiClips
             video_path,
             annotation_path,
             subset,
@@ -314,7 +318,7 @@ def get_inference_data(video_path,
         loader = VideoLoader(image_name_formatter)
         video_path_formatter = (
             lambda root_path, video_id: root_path / video_id)  #
-        inference_data = Charades(   #MultiClips
+        inference_data = CharadesMultiClips(   #MultiClips
             video_path,
             annotation_path,
             subset,

@@ -5,7 +5,7 @@
 #bash exp_scripts/debug.sh
 
 pre_path=' '  #'--pretrain_path results/mit_sknet26_M2__save_6.pth --n_pretrain_classes 339'
-resume_path=' --resume_path results/hollywood2_sknet326_M4__save_200.pth '
+resume_path=' --resume_path results/hollywood2_sknet326_M4__save_1.pth '
 root_path='./'
 annotation_path='./'
 video_path='../../../raid/Hollywood2'
@@ -14,10 +14,10 @@ model=sknet3   #resnet  sknet...
 depth=(26) # 50 101) 
 M=4
 
-batch_size=32
+batch_size=25
 
 dataset=hollywood2
-n_classes=30
+n_classes=12  ########### 12 classes
 sample_duration=30
 checkpoint=100
 epoch=200
