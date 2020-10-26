@@ -11,6 +11,7 @@ path = '../../../../raid/Charades/'
 import math
 import csv 
 import os
+import numpy as np
 
 
 # create mapping dictionary
@@ -94,7 +95,43 @@ with open('charades_validationSet.csv', 'w', newline='') as csvfile:
 
 # inference
 train_data = []
+# need to convert sec to frame number (24 fps)
+with open(path + 'Charades_v1_test.csv', newline='') as csvfile:
+    train_reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+    for row in train_reader:
+        if row[0] == 'id':
+            continue
+        id = row[0]
+        classes = ''
 
+        # get class names
+        clips = row[-2].split(';')
+
+        # remove some empty cases
+        if clips[0] == '':
+            continue
+        
+        # add to dataset
+        for clip in clips:
+            if len(clip) == 0: continue 
+            if classes == '':
+                classes = num2ClassName[clip[0:4]]
+            else:
+                classes = classes + '|'+ num2ClassName[clip[0:4]]
+        train_data.append([id, classes])       
+
+with open('charades_inferenceSet.csv', 'w', newline='') as csvfile:
+    train_writer = csv.writer(csvfile, delimiter=',')
+    for k, v in train_data:
+        count = len(os.listdir(path + 'cut/' + k))
+        # Inference Batch size = 25
+        ranges = np.linspace(0,count,27)
+        ranges = [int(i) for i in ranges]
+
+        for r in range(len(ranges)-2):
+            train_writer.writerow([k, v, ranges[r], ranges[r+2]])
+
+"""
 # need to convert sec to frame number (24 fps)
 with open(path + 'Charades_v1_test.csv', newline='') as csvfile:
     train_reader = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -119,3 +156,4 @@ with open('charades_inferenceSet.csv', 'w', newline='') as csvfile:
     train_writer = csv.writer(csvfile, delimiter=',')
     for i in range(len(train_data)):
         train_writer.writerow(train_data[i])
+"""

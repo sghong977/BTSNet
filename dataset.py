@@ -220,6 +220,9 @@ def get_validation_data(video_path,
             video_loader=loader,
             video_path_formatter=video_path_formatter)        
     elif dataset_name == 'charades':
+        from datasets.charades import collate_fn_val
+        collate_fn = collate_fn_val
+
         video_path_formatter = (
             lambda root_path, label, video_id: root_path / video_id)  #
 
@@ -315,6 +318,7 @@ def get_inference_data(video_path,
             video_loader=loader,
             video_path_formatter=video_path_formatter)
     elif dataset_name == 'charades':
+        from datasets.charades import collate_fn
         loader = VideoLoader(image_name_formatter)
         video_path_formatter = (
             lambda root_path, video_id: root_path / video_id)  #

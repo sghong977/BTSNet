@@ -164,6 +164,7 @@ import torch
 
 from torch.utils.data.dataloader import default_collate
 
+# for inference
 def collate_fn(batch):
     batch_clips, batch_targets = zip(*batch)
 

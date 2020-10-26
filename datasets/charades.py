@@ -98,6 +98,9 @@ class Charades(data.Dataset):
                 label = annotations[i]
                 label_id = class_to_idx[label]
                 segment = segments[i]
+                # exception
+                if segment[1] == segment[0]:
+                    continue
                 frame_indices = list(range(segment[0], segment[1]))
             else:
                 label = annotations[i]
@@ -105,8 +108,11 @@ class Charades(data.Dataset):
                 label_list = label.split('|')
                 label_id = [class_to_idx[i] for i in label_list]
                 segment = segments[i]
-                tt = np.linspace(segment[0], segment[1], 30)
+                tt = np.linspace(segment[0], segment[1]-1, 30)
                 frame_indices = [math.floor(i) for i in tt]
+                # exception
+                if segment[1] == segment[0]:
+                    continue
 
             video_path = video_paths[i]
             if not video_path.exists():
@@ -163,11 +169,24 @@ from torch.utils.data.dataloader import default_collate
 def collate_fn(batch):
     batch_clips, batch_targets = zip(*batch)
 
+    #batch_clips = [clip for multi_clips in batch_clips for clip in multi_clips]
+    #batch_targets = [
+    #    target for multi_targets in batch_targets for target in multi_targets
+    #]
+
+    target_element = batch_targets[0]
+    if isinstance(target_element, int) or isinstance(target_element, str):
+        return default_collate(batch_clips), default_collate(batch_targets)
+    else:
+        return default_collate(batch_clips), batch_targets
+
+def collate_fn_val(batch):
+    batch_clips, batch_targets = zip(*batch)
     batch_clips = [clip for multi_clips in batch_clips for clip in multi_clips]
     batch_targets = [
         target for multi_targets in batch_targets for target in multi_targets
     ]
-
+    
     target_element = batch_targets[0]
     if isinstance(target_element, int) or isinstance(target_element, str):
         return default_collate(batch_clips), default_collate(batch_targets)
@@ -176,6 +195,16 @@ def collate_fn(batch):
 
 
 class CharadesMultiClips(Charades):
+
+    def __loading__one(self, path, frame_indices):
+        clip = self.loader(path, frame_indices)
+
+        if self.spatial_transform is not None:
+            self.spatial_transform.randomize_parameters()
+            clip = [self.spatial_transform(img) for img in clip]
+        clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
+
+        return clip
 
     def __loading(self, path, video_frame_indices):
         clips = []
@@ -196,15 +225,21 @@ class CharadesMultiClips(Charades):
         path = self.data[index]['video']
 
         video_frame_indices = self.data[index]['frame_indices']
-        if self.temporal_transform is not None:
-            video_frame_indices = self.temporal_transform(video_frame_indices)
-        clips, segments = self.__loading(path, video_frame_indices)
+
+        if self.subset=='inference':
+            if self.temporal_transform is not None:
+                video_frame_indices = self.temporal_transform(video_frame_indices)
+            clips = self.__loading__one(path, video_frame_indices)
+        else:
+            if self.temporal_transform is not None:
+                video_frame_indices = self.temporal_transform(video_frame_indices)
+            clips, segments = self.__loading(path, video_frame_indices)
 
         if isinstance(self.target_type, list):
-            target = [self.data[index][t] for t in self.target_type]
+            targets = [self.data[index][t] for t in self.target_type]
         else:
-            target = self.data[index][self.target_type]
-
+            targets = self.data[index][self.target_type]
+        
         if 'segment' in self.target_type:
             if isinstance(self.target_type, list):
                 segment_index = self.target_type.index('segment')
@@ -214,7 +249,10 @@ class CharadesMultiClips(Charades):
                     targets[-1][segment_index] = s
             else:
                 targets = segments
+        # if inference, don't need eo expand to segments size
+        elif self.subset == 'inference':
+                pass
         else:
-            targets = [target for _ in range(len(segments))]
-
+            targets = [targets for _ in range(len(segments))]
+        
         return clips, targets

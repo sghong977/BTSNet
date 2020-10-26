@@ -23,11 +23,16 @@ file_list = os.listdir(in_path)
 for f in file_list:
     if not os.path.exists(base_out_path + f[:-4]): 
         os.makedirs(base_out_path + f[:-4]) 
-    print(f)
 
     cam = cv2.VideoCapture(in_path + '/' + f) 
     # frame 
     out_path = base_out_path + f[:-4]
+
+    # pass if not 0 ------------------ 
+    if len(os.listdir(out_path)) != 0:
+        continue
+    #---------------------------------
+    print(f)
 
     currentframe = 0
     while(True): 
