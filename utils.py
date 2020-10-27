@@ -182,3 +182,63 @@ def get_mean_std(value_scale, dataset):
     std = [x * value_scale for x in std]
 
     return mean, std
+
+# ----------- map here -----------------
+
+def map(submission_array, gt_array):
+    """ Returns mAP, weighted mAP, and AP array """
+    m_aps = []
+    n_classes = submission_array.shape[1]
+    for oc_i in range(n_classes):
+        sorted_idxs = np.argsort(-submission_array[:, oc_i])
+        #print(sorted_idxs)
+        tp = gt_array[:, oc_i][sorted_idxs] == 1
+        fp = np.invert(tp)
+        n_pos = tp.sum()
+        #print("tp fp",tp, fp)
+        if n_pos < 0.1:
+            m_aps.append(float('nan'))
+            continue
+        fp.sum()
+        f_pcs = np.cumsum(fp)
+        t_pcs = np.cumsum(tp)
+        prec = t_pcs / (f_pcs+t_pcs).astype(float)
+        avg_prec = 0
+        for i in range(submission_array.shape[0]):
+            if tp[i]:
+                avg_prec += prec[i]
+        m_aps.append(avg_prec / n_pos.astype(float))
+    m_aps = np.array(m_aps)
+    m_ap = np.mean(m_aps)
+    w_ap = (m_aps * gt_array.sum(axis=0) / gt_array.sum().sum().astype(float))
+    return m_ap, w_ap, m_aps
+
+
+def charades_map(submission_array, gt_array):
+    """ 
+    Approximate version of the charades evaluation function
+    For precise numbers, use the submission file with the official matlab script
+    """
+    fix = submission_array.copy()
+    empty = np.sum(gt_array, axis=1)==0
+    fix[empty, :] = np.NINF
+    return map(fix, gt_array)
+
+
+"""
+# testing
+gt = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+]
+sub = [[0.03786355, 0.03039423, 0.03388169, 0.14682204, 0.02106711, 0.01897206,
+ 0.05258106, 0.08459929, 0.31726122, 0.08100696, 0.02169852, 0.1538523 ],
+  [0.0930826,  0.03530487, 0.06187665, 0.0219669,  0.04086829, 0.08374146,
+ 0.03448753, 0.04045808, 0.0830375,  0.20746852, 0.01991116, 0.27779645]
+ ]
+
+sub = np.asarray(sub, dtype=np.float32)
+gt = np.asarray(gt)
+m_ap, w_ap, m_aps = charades_map(sub, gt)
+
+print(m_ap, w_ap, m_aps)
+"""

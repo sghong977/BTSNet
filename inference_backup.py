@@ -6,9 +6,6 @@ import torch
 import torch.nn.functional as F
 
 from utils import AverageMeter
-import numpy as np
-
-from utils import charades_map
 
 
 def get_video_results(outputs, class_names, output_topk):
@@ -30,11 +27,7 @@ def inference(data_loader, model, result_path, class_names, no_average,
     print('inference')
 
     model.eval()
-    #--
-    outs = []
-    gts = []
-    ids = []
-    #--
+
     batch_time = AverageMeter()
     data_time = AverageMeter()
     results = {'results': defaultdict(list)}
@@ -49,21 +42,6 @@ def inference(data_loader, model, result_path, class_names, no_average,
             outputs = model(inputs)
             outputs = F.softmax(outputs, dim=1).cpu()
 
-            #------------------------------
-            # targ should be like [0 0 0 0 0 1 0 1 ....]
-            classes = len(outputs[0]) # 157
-            targ = [0 for i in range(classes)]
-            targ = np.asarray(targ)
-            targ[targets[0]] = 1
-
-            # store predictions
-            output_video = outputs.mean(dim=0)
-            outs.append(output_video.data.cpu().numpy())
-#            print(targ, output_video.data.cpu().numpy())
-            gts.append(targ)
-            #ids.append(meta['id'][0])
-
-            #------------------------------
             #for j in range(outputs.size(0)):
             #    results['results'][video_ids[j]].append({
             #        'segment': segments[j],
@@ -81,26 +59,6 @@ def inference(data_loader, model, result_path, class_names, no_average,
                       batch_time=batch_time,
                       data_time=data_time))
 
-    mAP, _, ap = charades_map(np.vstack(outs), np.vstack(gts))
-    print(mAP, ap)
-    print(' * mAP {:.3f}'.format(mAP))
-    #submission_file(
-    #    ids, outputs, '{}/epoch_{:03d}.txt'.format(args.cache, epoch+1))
-
-    # outputs, gts
-    tm = time.strftime("%Y%m%d-%H%M%S")
-    with open(tm + 'outs.txt', 'w') as f:
-        for i in range(len(outs)):
-            aa = [str(i) for i in outs[i]]
-            f.writelines(aa)
-            f.write('\n')
-    with open(tm + 'gts.txt', 'w') as f:
-        for i in range(len(gts)):
-            bb = [str(i) for i in gts[i]]
-            f.writelines(bb)
-            f.write('\n')
-
-    """
     inference_results = {'results': {}}
     if not no_average:
         for video_id, video_results in results['results'].items():
@@ -125,4 +83,3 @@ def inference(data_loader, model, result_path, class_names, no_average,
 
     with result_path.open('w') as f:
         json.dump(inference_results, f)
-    """

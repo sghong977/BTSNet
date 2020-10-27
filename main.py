@@ -123,6 +123,7 @@ def get_train_utils(opt, model_parameters):
         dampening = 0
     else:
         dampening = opt.dampening
+    
     optimizer = SGD(model_parameters,
                     lr=opt.learning_rate,
                     momentum=opt.momentum,
@@ -137,7 +138,7 @@ def get_train_utils(opt, model_parameters):
             optimizer, 'min', patience=opt.plateau_patience)
     else:
         scheduler = lr_scheduler.MultiStepLR(optimizer, opt.multistep_milestones)
-    print(scheduler)
+    
     return (train_loader, train_sampler, train_logger, train_batch_logger, optimizer, scheduler)
 
 
@@ -312,12 +313,12 @@ def main_worker(index, opt):
     if opt.resume_path is not None:
         model = resume_model(opt.resume_path, opt.arch, model)
     model = make_data_parallel(model, opt.distributed, opt.device)
-
+    
     if opt.pretrain_path:
         parameters = get_fine_tuning_parameters(model, opt.ft_begin_module)
     else:
         parameters = model.parameters()
-
+    
     if opt.is_master_node:
         print(model)
 
@@ -393,18 +394,21 @@ def main_worker(index, opt):
                             opt.output_topk)
     # save file
     # if attn not extract
-    infoname = info + time.strftime("%Y%m%d-%H%M%S")
+    
 
-    timestr = "./results/" + infoname
-    with open(timestr+'_val_acc.txt', 'w') as f:
-        for i in range(len(val_acc_log)):
-            f.write("%s " % round(val_acc_log[i],5))
-    with open(timestr+'_train_acc.txt', 'w') as f:
-        for i in range(len(acc_log)):
-            f.write("%s " % round(acc_log[i],5))
-    with open(timestr+'_loss.txt', 'w') as f:
-        for i in range(len(loss_log)):
-            f.write("%s " % round(loss_log[i],5))
+    if not opt.inference:
+        infoname = info + time.strftime("%Y%m%d-%H%M%S")
+
+        timestr = "./results/" + infoname
+        with open(timestr+'_val_acc.txt', 'w') as f:
+            for i in range(len(val_acc_log)):
+                f.write("%s " % round(val_acc_log[i],5))
+        with open(timestr+'_train_acc.txt', 'w') as f:
+            for i in range(len(acc_log)):
+                f.write("%s " % round(acc_log[i],5))
+        with open(timestr+'_loss.txt', 'w') as f:
+            for i in range(len(loss_log)):
+                f.write("%s " % round(loss_log[i],5))
 
 
 if __name__ == '__main__':

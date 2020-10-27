@@ -151,6 +151,8 @@ def get_validation_data(video_path,
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
+    from datasets.videodataset_multiclips import collate_fn
+    collate_fn = collate_fn
 
     if file_type == 'jpg':
         assert input_type == 'rgb', 'flow input is supported only when input type is hdf5.'
