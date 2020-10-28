@@ -1,7 +1,9 @@
 import torch
 from torch import nn
 
-from models import resnet, resnet2p1d, resnext, sknet_3d, sknet_3d_t, sknet_3d_3, sknet_3d_attn
+from models import resnet, resnet2p1d, resnext, sknet_3d, \
+                    sknet_3d_t, sknet_3d_3, sknet_3d_attn, \
+                    slowfast
 
 
 def get_module_name(name):
@@ -32,7 +34,7 @@ def get_fine_tuning_parameters(model, ft_begin_module):
 
 def generate_model(opt):
     assert opt.model in [
-        'sknet', 'resnet', 'resnet2p1d', 'resnext', 'sknet2', 'sknet3'  #sknet will be added here
+        'sknet', 'resnet', 'resnet2p1d', 'resnext', 'sknet2', 'sknet3', 'slowfast'  #sknet will be added here
     ]
 
     if opt.model == 'resnet':
@@ -95,6 +97,9 @@ def generate_model(opt):
                                        conv1_t_stride=opt.conv1_t_stride,
                                        no_max_pool=opt.no_max_pool)
                                       #widen_factor=opt.resnet_widen_factor)
+    elif opt.model == 'slowfast':
+        model = slowfast.generate_model(n_classes=opt.n_classes,
+                                        model_depth=opt.model_depth)
 
     return model
 
