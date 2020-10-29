@@ -1,9 +1,9 @@
 import torch
 from torch import nn
 
-from models import resnet, resnet2p1d, resnext, sknet_3d, \
-                    sknet_3d_t, sknet_3d_3, sknet_3d_attn, \
-                    slowfast
+from models import resnet, resnet2p1d, resnext, spnet, slowfast
+                    #sknet_3d, sknet_3d_t, sknet_3d_3, sknet_3d_attn, \
+                    
 
 
 def get_module_name(name):
@@ -34,7 +34,7 @@ def get_fine_tuning_parameters(model, ft_begin_module):
 
 def generate_model(opt):
     assert opt.model in [
-        'sknet', 'resnet', 'resnet2p1d', 'resnext', 'sknet2', 'sknet3', 'slowfast'  #sknet will be added here
+        'sknet', 'resnet', 'resnet2p1d', 'resnext', 'spnet', 'slowfast'  #'sknet2', 'sknet3', sknet will be added here
     ]
 
     if opt.model == 'resnet':
@@ -64,6 +64,25 @@ def generate_model(opt):
                                        conv1_t_size=opt.conv1_t_size,
                                        conv1_t_stride=opt.conv1_t_stride,
                                        no_max_pool=opt.no_max_pool)
+    elif opt.model == 'slowfast':
+        model = slowfast.generate_model(n_classes=opt.n_classes,
+                                        model_depth=opt.model_depth)
+    
+    elif opt.model == 'spnet':
+        model = spnet.generate_model(model_depth=opt.model_depth,
+                                       
+                                       M=opt.M,
+                                       ops_type=opt.ops_type,
+                                       fuse_layer=opt.fuse_layer,
+
+                                       n_classes=opt.n_classes,
+                                       n_input_channels=opt.n_input_channels,
+                                       shortcut_type=opt.resnet_shortcut,
+                                       conv1_t_size=opt.conv1_t_size,
+                                       conv1_t_stride=opt.conv1_t_stride,
+                                       no_max_pool=opt.no_max_pool)
+
+    """
     elif opt.model == 'sknet':
         model = sknet_3d.generate_model(model_depth=opt.model_depth,
                                        M=opt.M,
@@ -97,9 +116,7 @@ def generate_model(opt):
                                        conv1_t_stride=opt.conv1_t_stride,
                                        no_max_pool=opt.no_max_pool)
                                       #widen_factor=opt.resnet_widen_factor)
-    elif opt.model == 'slowfast':
-        model = slowfast.generate_model(n_classes=opt.n_classes,
-                                        model_depth=opt.model_depth)
+    """
 
     return model
 
@@ -112,7 +129,7 @@ def load_pretrained_model(model, pretrain_path, model_name, n_finetune_classes):
         model.load_state_dict(pretrain['state_dict'])
         tmp_model = model
         
-        if model_name == 'sknet3':
+        if model_name == 'spnet':
             tmp_model.classifier = nn.Linear(tmp_model.classifier.in_features, n_finetune_classes)
         else:
             tmp_model.fc = nn.Linear(tmp_model.fc.in_features, n_finetune_classes)
