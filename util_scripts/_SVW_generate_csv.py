@@ -6,7 +6,7 @@ To this end, read CSV and count segments are needed beforehand.
 """
 
 
-path = '../../../../raid/SVW/'
+path = '../../../../data/video_dataset/SVW/' #'../../../../raid/SVW/'
 
 import csv 
 import os

@@ -10,9 +10,9 @@ import os
 # folder : ls -l | grep ^d | wc -l
 # files : ls -l | grep ^- | wc -l
 
-in_path = "../../../../raid/Hollywood2/Hollywood2/AVIClips/"
+in_path =  '../../../../data/video_dataset/Hollywood2/Hollywood2/AVIClips/' # "../../../../raid/Hollywood2/Hollywood2/AVIClips/"
 classes = os.listdir(in_path)
-base_out_path='../../../../raid/Hollywood2/cut/'
+base_out_path= '../../../../data/video_dataset/Hollywood2/Hollywood2/cut/' #'../../../../raid/Hollywood2/cut/'
 
 print (classes)
 

@@ -4,13 +4,24 @@ from pathlib import Path
 
 def parse_opts():
     parser = argparse.ArgumentParser()
-    #------- sknet 
+    #------- spnet 
     parser.add_argument(
         '--M',
         default=2,
         type=int,
-        help=
-        'Num of candidates for sknet M'
+        help='Num of candidates for sknet M'
+    )
+    parser.add_argument(
+        '--fuse_layer',
+        default='TC',
+        type=str,
+        help='TC or C'
+    )
+    parser.add_argument(
+        '--ops_type',
+        default='O2',
+        type=str,
+        help='O1 or O2'
     )
     #------------
     parser.add_argument('--root_path',

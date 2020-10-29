@@ -145,7 +145,6 @@ def get_train_utils(opt, model_parameters):
 def resume_model(resume_path, arch, model):
     print('loading checkpoint {} model'.format(resume_path))
     checkpoint = torch.load(resume_path, map_location='cpu')
-    assert arch == checkpoint['arch']
 
     if hasattr(model, 'module'):
         model.module.load_state_dict(checkpoint['state_dict'])
