@@ -12,7 +12,7 @@ model=slowfast   #resnet  sknet...
 depth=(50)
 M=2
 
-batch_size=2
+batch_size=32
 
 dataset=ucf101
 n_classes=101
