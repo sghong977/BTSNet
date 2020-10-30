@@ -7,11 +7,11 @@
 pre_path=' '  #'--pretrain_path results/mit_sknet26_M2__save_6.pth --n_pretrain_classes 339'
 resume_path=' '
 root_path='./'
-annotation_path='./'
+annotation_path='./csv_and_json/'
 video_path='../../../data/video_dataset/Hollywood2'
 
 model=resnet   #spnet  sknet... 
-depth=(50 101)   # 26
+depth=(101)   # 26
 M=4              #
 fuse_layer=TC    #
 ops_type=O2      #
