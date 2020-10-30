@@ -9,7 +9,7 @@ annotation_path='./csv_and_json/ucf101_01.json'
 video_path='../../../raid/video_data/ucf101/ucf101_videos'
 
 model=slowfast   #resnet  sknet... 
-depth=(50)
+depth=(101)
 M=4              #
 fuse_layer=TC    #
 ops_type=O2      #

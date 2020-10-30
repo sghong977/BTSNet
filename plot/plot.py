@@ -18,31 +18,26 @@ Dataset = {'UCF':[UCF_arr, UCF_l],
 # -------- Fuse Layer ----------
 # TC vs C
 titles = [
-    'UCF-101 | Fuse: TC vs C', # M=4 
-    'HMDB-51 | Different Candidates', # M=3, C vs OLD
     'UCF-101 | M: 4 vs 7',    # TC
-    'HMDB-51 | M: 3 vs 4',   # C
-    'UCF-101 | Depth: 26 vs 50',
-    'HMDB-51 | Depth: 26 vs 50 vs 101 (1)',
-    'HMDB-51 | Depth: 26 vs 50 vs 101 (2)',
+    'HMDB-51 | Depth: 26 vs 50 vs 101',
     'SVW | Depth: 26 vs 50', # M=4 TC
     'Hollywood2 | Depth: 26 vs 50 vs 101', # M=4 TC
+
+    'UCF-101 | Pretrained on MiT or not',   # M=4 TC O2 D50
+    'Hollywood2 | Pretrained on MiT or not',   # M=4 TC O2 D50
     ]
 
-reference_data = ['UCF', 'HMDB','UCF', 'HMDB',
-                    'UCF', 'HMDB', 'HMDB','SVW', 'Hollywood2']
-div = [2, 3, 2, 3, 
-        3, 2, 2, 1, 1] # for coloring
-indices = [[0,1, 2,3],
-        [5,6,7, 8,9,10, 0,1],
-        [2,3, 5,6],
-        [8,9,10, 11,12,13, 0,1],
-
-        [0,2,5, 1,3,6],
+reference_data = ['UCF','HMDB', 'SVW', 'Hollywood2',
+                'UCF', 'Hollywood2']
+div = [2, 2, 1, 1, 1, 1] # for coloring
+indices = [
+        [0,1, 2,3],
         [2,5, 3,6, 4,7, 0,1],
-        [8,11, 9,12, 10,13, 0,1],
         [0,1],
-        [0,1,2]
+        [0,1,2],
+
+        [1,4,5],
+        [1,3],
         ]
 
 #------------------- plot ------------------------
