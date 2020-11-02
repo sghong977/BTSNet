@@ -23,13 +23,13 @@ def get_class_labels(data, data_name, root_path):
     return class_labels_map
 
 # root_path == opt.video_path
-def get_database(data, subset, root_path, video_path_formatter, data_name):
+def get_database(data, subset, root_path, annotation_path, video_path_formatter, data_name):
     video_ids = []
     video_paths = []
     annotations = []
     segments = []
 
-    with open('charades_'+ subset +'Set.csv', newline='') as csvfile:
+    with open(str(annotation_path) + '/charades_'+ subset +'Set.csv', newline='') as csvfile:
         train_reader = csv.reader(csvfile, delimiter=',', quotechar='|')
         for row in train_reader:
             # key
@@ -78,7 +78,7 @@ class Charades(data.Dataset):
         # if 'mit', 'data' doesnt exist
         data = None
         video_ids, video_paths, annotations, segments = get_database(
-            data, subset, root_path, video_path_formatter, self.data_name)
+            data, subset, root_path, annotation_path, video_path_formatter, self.data_name)
         
         # redefine 'get_class_labels' for mit
         class_to_idx = get_class_labels(data, self.data_name, root_path)

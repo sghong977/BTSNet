@@ -5,14 +5,16 @@
 #bash exp_scripts/debug.sh
 
 pre_path=' ' #--pretrain_path  --n_pretrain_classes 339 '
-resume_path=' --resume_path results/charades_sknet350_M4__save_60.pth '
+resume_path=' --resume_path results/charades_sknet350_M4__save_140.pth '
 root_path='./'
-annotation_path='./'
+annotation_path='./csv_and_json/'
 video_path='../../../raid/Charades'
 
-model=sknet3   #resnet  sknet... 
+model=spnet   #resnet  sknet... 
 depth=(50) # 26 101) 
 M=4
+fuse_layer=TC    #
+ops_type=O2      #
 
 batch_size=25
 
@@ -26,6 +28,6 @@ learning_rate=0.01
 
 i=0
 for i in "${!depth[@]}"; do
-    CUDA_VISIBLE_DEVICES=7 python main.py $resume_path --inference_batch_size 25 --no_train --no_val --inference --inference_subset test $pre_path --n_epochs $epoch --M $M --root_path $root_path --annotation_path $annotation_path --video_path $video_path --sample_duration $sample_duration --result_path results  --dataset $dataset --n_classes $n_classes --ft_begin_module fc --model $model --model_depth ${depth[$i]} --batch_size $batch_size --n_threads 4 --checkpoint $checkpoint #> logs/sknet_$M$dataset$model${depth[$i]}$i.txt
+    CUDA_VISIBLE_DEVICES=4 python main.py $resume_path --inference_batch_size 25 --no_train --no_val --inference --inference_subset test $pre_path --n_epochs $epoch  --ops_type $ops_type --fuse_layer $fuse_layer  --M $M --root_path $root_path --annotation_path $annotation_path --video_path $video_path --sample_duration $sample_duration --result_path results  --dataset $dataset --n_classes $n_classes --ft_begin_module fc --model $model --model_depth ${depth[$i]} --batch_size $batch_size --n_threads 4 --checkpoint $checkpoint #> logs/sknet_$M$dataset$model${depth[$i]}$i.txt
 done
 #    CUDA_VISIBLE_DEVICES=4,5,6,7 python main.py --root_path $root_path --annotation_path $annotation_path --video_path $video_path --sample_duration $sample_duration --result_path results  --dataset $dataset --n_classes $n_classes ${pre_path[$i]} --ft_begin_module fc --model resnet --model_depth ${depth[$i]} --batch_size $batch_size --n_threads 4 --checkpoint 5 #> jig_tmp$i.txt

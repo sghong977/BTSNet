@@ -262,6 +262,12 @@ def get_validation_data(video_path,
             video_loader=loader,
             video_path_formatter=video_path_formatter)        
     elif dataset_name == 'epic':
+        if get_image_backend() == 'accimage':
+            from datasets.loader import ImageLoaderAccImage
+            loader = VideoLoader(epic_image_name_formatter, ImageLoaderAccImage())
+        else:
+            loader = VideoLoader(epic_image_name_formatter)
+
         validation_data = EpicKitchenMultiClips(
             video_path,
             annotation_path,
