@@ -6,6 +6,7 @@ from datasets.videodataset_multiclips import (VideoDatasetMultiClips,
 from datasets.activitynet import ActivityNet
 from datasets.hollywood2 import Hollywood2, Hollywood2MultiClips
 from datasets.charades import Charades, CharadesMultiClips
+from datasets.epic_kitchen import EpicKitchen, EpicKitchenMultiClips
 from datasets.loader import VideoLoader, VideoLoaderHDF5, VideoLoaderFlowHDF5
 
 import torch
@@ -28,6 +29,13 @@ def image_name_formatter(x):
 def jester_img_name_formatter(x):
     return f'{x:05d}.jpg'
 
+# epic
+def epic_image_name_formatter(x):
+    return f'frame{x:010d}.jpg'
+def epic_flow_name_formatter(flow, x):
+    return flow + f'_{x:010d}.jpg'
+
+
 def get_training_data(video_path,
                       annotation_path,
                       dataset_name,
@@ -38,7 +46,7 @@ def get_training_data(video_path,
                       target_transform=None,
                       ):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester', 'charades', 'SVW', 'hollywood2'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester', 'charades', 'SVW', 'hollywood2', 'epic'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -124,6 +132,21 @@ def get_training_data(video_path,
                                      target_transform=target_transform,
                                      video_loader=loader,
                                      video_path_formatter=video_path_formatter)
+    elif dataset_name == 'epic':
+        if get_image_backend() == 'accimage':
+            from datasets.loader import ImageLoaderAccImage
+            loader = VideoLoader(epic_image_name_formatter, ImageLoaderAccImage())
+        else:
+            loader = VideoLoader(epic_image_name_formatter)
+        training_data = EpicKitchen(video_path,
+                                     annotation_path,
+                                     'training',
+                                     data_name=dataset_name,
+                                     spatial_transform=spatial_transform,
+                                     temporal_transform=temporal_transform,
+                                     target_transform=target_transform,
+                                     video_loader=loader,
+                                     video_path_formatter=video_path_formatter)
     else:
         training_data = VideoDataset(video_path,
                                      annotation_path,
@@ -147,7 +170,7 @@ def get_validation_data(video_path,
                         temporal_transform=None,
                         target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester', 'charades', 'SVW', 'hollywood2'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'jester', 'charades', 'SVW', 'hollywood2', 'epic'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -238,6 +261,17 @@ def get_validation_data(video_path,
             target_transform=target_transform,
             video_loader=loader,
             video_path_formatter=video_path_formatter)        
+    elif dataset_name == 'epic':
+        validation_data = EpicKitchenMultiClips(
+            video_path,
+            annotation_path,
+            'validation',
+            data_name=dataset_name,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            video_loader=loader,
+            video_path_formatter=video_path_formatter)        
     else:
         validation_data = VideoDatasetMultiClips(
             video_path,
@@ -263,7 +297,7 @@ def get_inference_data(video_path,
                        temporal_transform=None,
                        target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'charades', 'SVW', 'hollywood2'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'charades', 'SVW', 'hollywood2', 'epic'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -324,6 +358,21 @@ def get_inference_data(video_path,
         loader = VideoLoader(image_name_formatter)
         video_path_formatter = (
             lambda root_path, video_id: root_path / video_id)  #
+        inference_data = CharadesMultiClips(   #MultiClips
+            video_path,
+            annotation_path,
+            subset,
+            data_name=dataset_name,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            video_loader=loader,
+            video_path_formatter=video_path_formatter)
+    elif dataset_name == 'epic':
+        from datasets.epic_kitchen import collate_fn
+#        loader = VideoLoader(image_name_formatter)
+#        video_path_formatter = (
+#            lambda root_path, video_id: root_path / video_id)  #
         inference_data = CharadesMultiClips(   #MultiClips
             video_path,
             annotation_path,

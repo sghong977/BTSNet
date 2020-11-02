@@ -2,25 +2,82 @@
 # Temporal-Channel = TC
 # channel-wise = C
 # temporal/spatial divide X = OLD
+import os
+
 UCF_l = [
-        'TC-M4-SP26-O2', #0
+        'ResNet-50', #0
+        'ResNet-101',
+        'SlowFast-50',
+        'SlowFast-101',
+
+        #--- TC, O2, M=2,3,4
+        'TC-M2-SP26-O2', #4
+        'TC-M2-SP50-O2',
+        'TC-M2-SP101-O2',   #X
+
+        'TC-M3-SP26-O2',  #7
+        'TC-M3-SP50-O2',   #X
+        'TC-M3-SP101-O2',   #X
+
+        'TC-M4-SP26-O2', # 10
         'TC-M4-SP50-O2',
         'TC-M4-SP101-O2',
 
-        'TC-M7-SP26-O2', # 3
+        'TC-M7-SP26-O2', # 13
         'TC-M7-SP50-O2',
+        'TC-M7-SP101-O2',   #       X
 
-        'TC-M4-SP50-O2-PRET', #5
+        'TC-M4-SP50-O2-PRET', #16
+        #--- C
+        'C-M4-SP26-O2', #17         X
+        'C-M4-SP50-O2',  #          X
+        'C-M4_SP101-O2',   #        X
+
+        #--------------- O1
+        'TC-M2-SP26-O1', #20        X
+        'TC-M2-SP50-O1', #          X
+        
+        'TC-M3-SP26-O1',  #22
+        'TC-M3-SP50-O1', #        X
+        'TC-M4-SP26-O1',  #24
+        'TC-M4-SP50-O1', #        X
+
         ]
 UCF = [
-    'results/ucf101_sknet326_M4_20201007-062945',
+    #---- 
+    'results/ucf101_resnet50_M4_20201030-094546',
+    'results/ucf101_resnet101_M4_20201031-165354',
+    'results/ucf101_slowfast50_M4_20201030-015238',
+    'results/ucf101_slowfast101_M4_20201031-124539',
+    #-
+    'results/ucf101_spnet26_M2_20201030-181325', #4
+    'results/ucf101_spnet50_M2_20201101-060206',
+    '',
+    
+    'results/ucf101_spnet26_M3_20201031-221721', #7
+    '',
+    '',
+
+    'results/ucf101_sknet326_M4_20201007-062945', #10
     'results/ucf101_sknet350_M4_20201008-161223',
     'results/ucf101_sknet3101_M4_20201010-090646',
 
-    'results/ucf101_sknet326_M7_20201014-174418',
+    'results/ucf101_sknet326_M7_20201014-174418', #13
     'results/ucf101_sknet350_M7_20201016-183956',
+    '',
 
-    'results/ucf101_sknet350_M4_20201028-185927',
+    'results/ucf101_sknet350_M4_20201028-185927',  #16
+    # C-O2
+    '',
+    '',
+    '',
+    #----- O1
+    '',
+    '',
+    'results/ucf101_spnet26_M3_20201031-215149',
+    '',
+    'results/ucf101_spnet26_M4_20201101-031147',
+    ''
     ]
 
 
@@ -86,11 +143,14 @@ path = '../'
 # read data
 UCF_arr = []
 for j in range(len(UCF)):
-    f2 = open(path+UCF[j]+"_val_acc.txt", 'r')
-    a = f2.readline().split(' ')[0:-1]
-    a = [float(i) for i in a]
-    UCF_arr.append(a)
-    f2.close()
+    if UCF[j] == '':
+        UCF_arr.append([])
+    else:
+        f2 = open(path+UCF[j]+"_val_acc.txt", 'r')
+        a = f2.readline().split(' ')[0:-1]
+        a = [float(i) for i in a]
+        UCF_arr.append(a)
+        f2.close()
 
 HMDB_arr = []
 for j in range(len(HMDB)):
