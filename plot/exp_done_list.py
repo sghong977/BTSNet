@@ -16,7 +16,7 @@ UCF_l = [
         'TC-M2-SP101-O2',   #X
 
         'TC-M3-SP26-O2',  #7
-        'TC-M3-SP50-O2',   #X
+        'TC-M3-SP50-O2',
         'TC-M3-SP101-O2',   #X
 
         'TC-M4-SP26-O2', # 10
@@ -38,7 +38,7 @@ UCF_l = [
         'TC-M2-SP50-O1', #          X
         
         'TC-M3-SP26-O1',  #22
-        'TC-M3-SP50-O1', #        X
+        'TC-M3-SP50-O1', 
         'TC-M4-SP26-O1',  #24
         'TC-M4-SP50-O1', #        X
 
@@ -55,7 +55,7 @@ UCF = [
     '',
     
     'results/ucf101_spnet26_M3_20201031-221721', #7
-    '',
+    'results/ucf101_spnet50_M3_20201102-083027',
     '',
 
     'results/ucf101_sknet326_M4_20201007-062945', #10
@@ -75,7 +75,7 @@ UCF = [
     '',
     '',
     'results/ucf101_spnet26_M3_20201031-215149',
-    '',
+    'results/ucf101_spnet50_M3_20201102-073241',
     'results/ucf101_spnet26_M4_20201101-031147',
     ''
     ]

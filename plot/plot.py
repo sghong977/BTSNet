@@ -22,6 +22,9 @@ titles = [
     'UCF-101 | Comparing M',
     'UCF-101 | Comparing M (2)',
 
+    # candidates
+    'UCF-101 | O1 vs O2',
+
     # Depth
     'UCF-101 | Depth: 26 vs 50 vs 101',
     'HMDB-51 | Depth: 26 vs 50 vs 101',
@@ -34,14 +37,18 @@ titles = [
     ]
 
 reference_data = ['UCF', 'UCF',
+                'UCF',
                 'UCF', 'HMDB', 'SVW', 'Hollywood2',
                 'UCF', 'Hollywood2']
 div = [1, 2,
+        2,
         2, 2, 1, 1, 
         1, 1] # for coloring
 indices = [
         [0,1,2,3, 4,7,10,13],
         [0,1,2,3, 4, 10, 13],
+
+        [0,1,2,3, 7,10, 22,24],
 
         [0,1, 2,3, 10,11,12],
         [2,5, 3,6, 4,7, 0,1],
