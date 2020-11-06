@@ -17,7 +17,7 @@ UCF_l = [
 
         'TC-M3-SP26-O2',  #7
         'TC-M3-SP50-O2',
-        'TC-M3-SP101-O2',   #X
+        'TC-M3-SP101-O2',
 
         'TC-M4-SP26-O2', # 10
         'TC-M4-SP50-O2',
@@ -36,11 +36,15 @@ UCF_l = [
         #--------------- O1
         'TC-M2-SP26-O1', #20        X
         'TC-M2-SP50-O1', #          X
+        'TC-M2-SP101-O1',#          X
         
-        'TC-M3-SP26-O1',  #22
+        'TC-M3-SP26-O1',  #23
         'TC-M3-SP50-O1', 
-        'TC-M4-SP26-O1',  #24
+        'TC-M3-SP101-O1',
+
+        'TC-M4-SP26-O1',  #26
         'TC-M4-SP50-O1', #        X
+        'TC-M4-SP101-O1',#          X
 
         ]
 UCF = [
@@ -56,7 +60,7 @@ UCF = [
     
     'results/ucf101_spnet26_M3_20201031-221721', #7
     'results/ucf101_spnet50_M3_20201102-083027',
-    '',
+    'results/ucf101_spnet101_M3_O2_TC_20201105-051134',
 
     'results/ucf101_sknet326_M4_20201007-062945', #10
     'results/ucf101_sknet350_M4_20201008-161223',
@@ -74,10 +78,15 @@ UCF = [
     #----- O1
     '',
     '',
+    '',
+
     'results/ucf101_spnet26_M3_20201031-215149',
     'results/ucf101_spnet50_M3_20201102-073241',
+    'results/ucf101_spnet101_M3_O1_TC_20201105-042017',
+
     'results/ucf101_spnet26_M4_20201101-031147',
-    ''
+    '',
+    '',
     ]
 
 
@@ -135,6 +144,21 @@ Hollywood2 = [
     'results/hollywood2_sknet350_M4_20201029-030600',    #3, M4 TC O2 pret
     ]
 
+EpicKitchen_l = [
+    'ResNet-50',
+    'ResNet-101',
+    'SlowFast-50',
+    'SlowFast-101',
+
+    'TC-M4-'
+
+]
+EpicKitchen = [
+    'results/epic_resnet50_M4_O2_TC_20201104-085926',
+    '',
+    'results/epic_slowfast50_M4_O2_TC_20201104-032644',
+    '',
+]
 
 
 #--------------------------
@@ -150,6 +174,17 @@ for j in range(len(UCF)):
         a = f2.readline().split(' ')[0:-1]
         a = [float(i) for i in a]
         UCF_arr.append(a)
+        f2.close()
+
+EpicKitchen_arr = []
+for j in range(len(EpicKitchen)):
+    if EpicKitchen[j] == '':
+        EpicKitchen_arr.append([])
+    else:
+        f2 = open(path+EpicKitchen[j]+"_val_acc.txt", 'r')
+        a = f2.readline().split(' ')[0:-1]
+        a = [float(i) for i in a]
+        EpicKitchen_arr.append(a)
         f2.close()
 
 HMDB_arr = []
