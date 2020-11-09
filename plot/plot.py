@@ -24,18 +24,24 @@ titles = [
     'UCF-101 | Comparing M (O2-2)',
     'UCF-101 | Comparing M (O2-3)',
     'UCF-101 | Comparing M (O1)',
+    'UCF-101 | Comparing M (O2-C)',
     # candidates
     'UCF-101 | O1 vs O2 (1)',
     'UCF-101 | O1 vs O2 (2)',
+    'UCF-101 | O1 vs O2 (3)',
     # Depth-ucf
     'UCF-101 | Depth: 26 vs 50 vs 101 (O2-1)',
     'UCF-101 | Depth: 26 vs 50 vs 101 (O2-2)',
     'UCF-101 | Depth: 26 vs 50 vs 101 (O2-3)',
     'UCF-101 | Depth: 26 vs 50 vs 101 (O1)',
+    'UCF-101 | Depth: 26 vs 50 (O2-C)',
     # depth-others
     'HMDB-51 | Depth: 26 vs 50 vs 101',
     'SVW | Depth: 26 vs 50', # M=4 TC
     'Hollywood2 | Depth: 26 vs 50 vs 101', # M=4 TC
+    #Fuse Layer
+    'UCF-101 | TC vs C (Depth 26)',
+    'UCF-101 | TC vs C (Depth 50)',
 
     #Pretrain
     'UCF-101 | Pretrained on MiT or not',   # M=4 TC O2 D50
@@ -45,38 +51,46 @@ titles = [
     'EpicKitchen | noun',
     ]
 
-reference_data = ['UCF', 'UCF','UCF',
-                'UCF','UCF',
-                'UCF','UCF','UCF','UCF', 'HMDB', 'SVW', 'Hollywood2',
+reference_data = ['UCF', 'UCF','UCF','UCF','UCF',
+                'UCF','UCF','UCF',
+                'UCF','UCF','UCF','UCF','UCF', 'HMDB', 'SVW', 'Hollywood2',
+                'UCF','UCF',  # Fuse 
                 'UCF', 'Hollywood2',
                 'EpicKitchen']
-div = [1, 1, 1, 1,
-        2,2,
-        1, 1,2,1,   2, 1, 1, 
+div = [1, 1, 1, 1,2,
+        2,2,2,
+        1, 1,2,1,2,   2, 1, 1, 
+        2,2,   # Fuse
         1, 1,
-        1] # for coloring
+        2] # for coloring
 indices = [ # M
         [0,1,2,3, 4,7,10,13],
         [0,1,2,3, 5,8,11,14],
         [0,1,2,3, 9,12],
-        [0,1,2,3, 23, 26],
+        [0,1,2,3, 26, 29],
+        [0,1,2,3, 17,18,20,21],
         # candidates
-        [0,1,2,3, 8,9, 24,25],
-        [0,1,2,3, 7,10, 23,26],
+        [0,1,2,3, 8,9, 27,28],
+        [0,1,2,3, 7,10, 26,29],
+        [0,1,2,3, 9,12, 28,31],
         #depth-ucf
         [0,1,2,3, 7,8,9],
         [0,1,2,3, 10,11,12],
         [0,1,2,3, 4,13, 5,14],
-        [0,1,2,3, 23,24,25],
+        [0,1,2,3, 26,27,28],
+        [0,1,2,3, 17,20, 18,21],
         # depth-others
         [2,5, 3,6, 4,7, 0,1],
         [0,1],
         [0,1,2],
-
+        # Fuse
+        [0,1,2,3, 7,10, 17,20],
+        [0,1,2,3, 8,11, 18,21],
+        # last
         [11, 16],
         [1,3],
 
-        [0, 2]
+        [0,1, 2,3, 4]
         ]
 
 #------------------- plot ------------------------
@@ -102,3 +116,4 @@ for title in range(len(titles)):
     plt.tight_layout()
     plt.savefig(titles[title] + "_valid.png")
     plt.cla()
+    plt.close()
