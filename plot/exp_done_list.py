@@ -47,8 +47,10 @@ UCF_l = [
         'TC-M3-SP101-O1',
 
         'TC-M4-SP26-O1',  #29
-        'TC-M4-SP50-O1', #        X
+        'TC-M4-SP50-O1',
         'TC-M4-SP101-O1',
+        #-- O1, C
+        'C-M4-SP26-O1',        #32
 
         ]
 UCF = [
@@ -93,7 +95,7 @@ UCF = [
     'results/ucf101_spnet101_M3_O1_TC_20201105-042017',
 
     'results/ucf101_spnet26_M4_20201101-031147',
-    '',
+    'results/ucf101_spnet50_M4_O1_TC_20201109-095610',
     'results/ucf101_spnet101_M4_O1_TC_20201107-212702',
     ]
 
@@ -159,6 +161,7 @@ EpicKitchen_l = [
     'SlowFast-101',
 
     'TC-M4-SP26-O2',
+    'TC-M4-SP50-O2',
 
 ]
 EpicKitchen = [
@@ -167,7 +170,8 @@ EpicKitchen = [
     'results/epic_slowfast50_M4_O2_TC_20201104-032644',
     'results/epic_slowfast101_M4_O2_TC_20201106-061910',
     
-    'results/epic_spnet26_M4_O2_TC_20201106-171538'
+    'results/epic_spnet26_M4_O2_TC_20201106-171538',
+    'results/epic_spnet50_M4_O2_TC_20201110-011514',
 ]
 
 

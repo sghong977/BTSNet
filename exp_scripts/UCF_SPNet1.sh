@@ -9,9 +9,9 @@ annotation_path='./csv_and_json/ucf101_01.json'
 video_path='../../../raid/video_data/ucf101/ucf101_videos'
 
 model=spnet   #resnet  sknet... 
-depth=(101 50)
+depth=(26 50 101)
 M=4              #
-fuse_layer=TC    #
+fuse_layer=C    #
 ops_type=O1      #
 
 
