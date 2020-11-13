@@ -11,47 +11,52 @@ UCF_l = [
         'SlowFast-101',
 
         #--- TC, O2, M=2,3,4
-        'TC-M2-SP26-O2', #4
-        'TC-M2-SP50-O2',
-        'TC-M2-SP101-O2',   #X
+        'TC-M2-BTS26-O2', #4
+        'TC-M2-BTS50-O2',
+        'TC-M2-BTS101-O2',   #X
 
-        'TC-M3-SP26-O2',  #7
-        'TC-M3-SP50-O2',
-        'TC-M3-SP101-O2',
+        'TC-M3-BTS26-O2',  #7
+        'TC-M3-BTS50-O2',
+        'TC-M3-BTS101-O2',
 
-        'TC-M4-SP26-O2', # 10
-        'TC-M4-SP50-O2',
-        'TC-M4-SP101-O2',
+        'TC-M4-BTS26-O2', # 10
+        'TC-M4-BTS50-O2',
+        'TC-M4-BTS101-O2',
 
-        'TC-M7-SP26-O2', # 13
-        'TC-M7-SP50-O2',
-        'TC-M7-SP101-O2',   #       X
+        'TC-M7-BTS26-O2', # 13
+        'TC-M7-BTS50-O2',
+        'TC-M7-BTS101-O2',   #       X
 
-        'TC-M4-SP50-O2-PRET', #16
+        'TC-M4-BTS50-O2-PRET', #16
         #--- C
-        'C-M3-SP26-O2',  #17
-        'C-M3-SP50-O2',
-        'C-M3-SP101-O2',
+        'C-M3-BTS26-O2',  #17
+        'C-M3-BTS50-O2',
+        'C-M3-BTS101-O2',
 
-        'C-M4-SP26-O2', #20         
-        'C-M4-SP50-O2',
-        'C-M4_SP101-O2',
+        'C-M4-BTS26-O2', #20         
+        'C-M4-BTS50-O2',
+        'C-M4_BTS101-O2',
 
         #--------------- O1
-        'TC-M2-SP26-O1', #23        X
-        'TC-M2-SP50-O1', #          X
-        'TC-M2-SP101-O1',#          X
+        'TC-M2-BTS26-O1', #23
+        'TC-M2-BTS50-O1', #          X
+        'TC-M2-BTS101-O1',#          X
         
-        'TC-M3-SP26-O1',  #26
-        'TC-M3-SP50-O1', 
-        'TC-M3-SP101-O1',
+        'TC-M3-BTS26-O1',  #26
+        'TC-M3-BTS50-O1', 
+        'TC-M3-BTS101-O1',
 
-        'TC-M4-SP26-O1',  #29
-        'TC-M4-SP50-O1',
-        'TC-M4-SP101-O1',
+        'TC-M4-BTS26-O1',  #29
+        'TC-M4-BTS50-O1',
+        'TC-M4-BTS101-O1',
         #-- O1, C
-        'C-M4-SP26-O1',        #32
+        'C-M3-BTS26-O1',        #32
+        'C-M3-BTS50-O1',
+        'C-M3-BTS101-O1'.#          X
 
+        'C-M4-BTS26-O1',        #35
+        'C-M4-BTS50-O1',
+        'C-M4-BTS101-O1'.#          X
         ]
 UCF = [
     #---- 
@@ -86,17 +91,26 @@ UCF = [
     'results/ucf101_spnet50_M4_O2_C_20201108-210205',
     'results/ucf101_spnet101_M4_O2_C_20201110-153538',
     #----- O1
-    '',
+    'results/ucf101_spnet26_M2_O1_TC_20201112-045614', #23
     '',
     '',
 
-    'results/ucf101_spnet26_M3_20201031-215149',
+    'results/ucf101_spnet26_M3_20201031-215149', #26
     'results/ucf101_spnet50_M3_20201102-073241',
     'results/ucf101_spnet101_M3_O1_TC_20201105-042017',
 
-    'results/ucf101_spnet26_M4_20201101-031147',
+    'results/ucf101_spnet26_M4_20201101-031147',  #29
     'results/ucf101_spnet50_M4_O1_TC_20201109-095610',
     'results/ucf101_spnet101_M4_O1_TC_20201107-212702',
+
+    'results/ucf101_spnet26_M3_O1_C_20201111-051051',    # 32
+    'results/ucf101_spnet50_M3_O1_C_20201112-115727',
+    '',
+
+    'results/ucf101_spnet26_M4_O1_C_20201111-114854',   #35
+    'results/ucf101_spnet50_M4_O1_C_20201112-230727',
+    '',
+
     ]
 
 
@@ -104,33 +118,54 @@ UCF = [
 HMDB_l = [
     'ResNet50', #0
     'ResNet101',
+    'Slowfast-50',
+    'Slowfast-101',
 
-    'C-M2-SK26-O1', #2
-    'C-M2-SK50-O1',
-    'C-M2-SK101-O1',
+    'C-M2-BTS26-O1', #4
+    'C-M2-BTS50-O1',
+    'C-M2-BTS101-O1',
     
-    'C-M3-SK26-O1', #5
-    'C-M3-SK50-O1',
-    'C-M3-SK101-O1',
+    'C-M3-BTS26-O1', #7
+    'C-M3-BTS50-O1',
+    'C-M3-BTS101-O1',
+
+    #------ TC O1
+    'TC-M3-BTS26-O1', #10
+    'TC-M3-BTS50-O1',
+    'TC-M3-BTS101-O1',
+
+    #------ TC O2
+    'TC-M3-BTS26-O2', #13
+    'TC-M3-BTS50-O2',
+    'TC-M3-BTS101-O2',
+
 ]
 HMDB = [
     'olds/results/hmdb51_resnet50_M2_20200911-202451',
     'olds/results/hmdb51_resnet101_M2_20200912-150219',
+    '',
+    '',
     
-    'olds/results/hmdb51_sknet26_M2_20200911-214316',
+    'olds/results/hmdb51_sknet26_M2_20200911-214316', #4
     'olds/results/hmdb51_sknet50_M2_20200912-183445',
     'olds/results/hmdb51_sknet101_M2_20200913-164034',
 
-    'olds/results/hmdb51_sknet26_M3_20200911-231448',
+    'olds/results/hmdb51_sknet26_M3_20200911-231448', #7
     'olds/results/hmdb51_sknet50_M3_20200912-224731',
     'olds/results/hmdb51_sknet101_M3_20200913-215856',
+
+    'results/hmdb51_spnet26_M3_O1_TC_20201111-141814', #10
+    'results/hmdb51_spnet50_M3_O1_TC_20201112-054541',
+    'results/hmdb51_spnet101_M3_O1_TC_20201113-004856',
+
+    '', #13
 ]
 
 # SVW
 # Channel-wise
 SVW_l = [
-    'TC-M4-26-O2',
-    'TC-M4-50-O2'
+    'TC-M4-BTS26-O2',
+    'TC-M4-BTS50-O2'
 ]
 SVW = [
     'results/SVW_sknet326_M4_20201019-154545',
@@ -140,11 +175,11 @@ SVW = [
 # Hollywood2
 # 쓰레기실험 하나 있음. class수 오류
 Hollywood2_l = [
-        'TC-M4-26-O2',
-        'TC-M4-50-O2',
-        'TC-M4-101-O2',
+        'TC-M4-BTS26-O2',
+        'TC-M4-BTS50-O2',
+        'TC-M4-BTS101-O2',
 
-        'TC-M4-50-O2-PRET',
+        'TC-M4-BTS50-O2-PRET',
         ]
 Hollywood2 = [
     'results/hollywood2_sknet326_M4_20201026-131234', #0
@@ -160,16 +195,17 @@ EpicKitchen_l = [
     'SlowFast-50',
     'SlowFast-101',
 
-    'TC-M4-SP26-O2',
-    'TC-M4-SP50-O2',
+    'TC-M4-BTS26-O2',
+    'TC-M4-BTS50-O2',
 
 ]
+# slowfast101 : starts with lr 0.01. (not converged well on lr 0.1)
 EpicKitchen = [
     'results/epic_resnet50_M4_O2_TC_20201104-085926',
     'results/epic_resnet101_M4_O2_TC_20201106-155250',
     'results/epic_slowfast50_M4_O2_TC_20201104-032644',
     'results/epic_slowfast101_M4_O2_TC_20201111-014056',
-    #'results/epic_slowfast101_M4_O2_TC_20201106-061910',
+    'results/epic_slowfast101_M4_O2_TC_20201113-004559', #'results/epic_slowfast101_M4_O2_TC_20201106-061910',
     
     'results/epic_spnet26_M4_O2_TC_20201106-171538',
     'results/epic_spnet50_M4_O2_TC_20201110-011514',
