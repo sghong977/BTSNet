@@ -265,14 +265,14 @@ for j in range(len(Hollywood2)):
     Hollywood2_arr.append(a)
     f2.close()
 
-UCF_print_idx = [0,1,2,3, 10,11,12]
-HMDB_print_idx = [0,1,    10,11,12]
-SVW_print_idx = [0,1]
+UCF_print_idx =         [0,1,2,3, 17,18, 32,33]   #[0,1,2,3, 10,11,12]
+#HMDB_print_idx = [0,1,    10,11,12]
+#SVW_print_idx = [0,1]
 
-"""
 print("UCF")
 for i in range(len(UCF_print_idx)):
-    print(UCF_l[UCF_print_idx[i]], UCF_arr[UCF_print_idx[i]][-1])
+    print(UCF_l[UCF_print_idx[i]], round(UCF_arr[UCF_print_idx[i]][-1]*100, 5))
+"""
 print("HMDB")
 for i in range(len(HMDB_print_idx)):
     print(HMDB_l[HMDB_print_idx[i]], HMDB_arr[HMDB_print_idx[i]][-1])
