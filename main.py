@@ -323,7 +323,7 @@ def main_worker(index, opt):
 
     criterion = CrossEntropyLoss().to(opt.device)
 
-    info = opt.dataset + "_" + opt.model + str(opt.model_depth) + '_M' + str(opt.M) + '_' + opt.ops_type + '_' + opt.fuse_layer + '_'    ###
+    info = opt.dataset + "_" + opt.model + str(opt.model_depth) + opt.lr_scheduler + str(opt.learning_rate) + '_M' + str(opt.M) + '_' + opt.ops_type + '_' + opt.fuse_layer + '_'    ###
     print(info)
 
     if not opt.no_train:

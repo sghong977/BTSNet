@@ -1,3 +1,5 @@
+# create new file because of the different learning scheduler.
+
 #UCF101
 # Temporal-Channel = TC
 # channel-wise = C

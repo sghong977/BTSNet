@@ -162,6 +162,7 @@ def get_opt():
         with (opt.result_path / 'opts.json').open('w') as opt_file:
             json.dump(vars(opt), opt_file, default=json_serial)
     """
+    print(opt)
     return opt
 
 # get mean and std value of each dataset
