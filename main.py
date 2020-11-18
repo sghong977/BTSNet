@@ -135,7 +135,7 @@ def get_train_utils(opt, model_parameters):
     assert not (opt.lr_scheduler == 'plateau' and opt.no_val)
     if opt.lr_scheduler == 'plateau':
         scheduler = lr_scheduler.ReduceLROnPlateau(
-            optimizer, 'min', patience=opt.plateau_patience)
+            optimizer, 'min', patience=opt.plateau_patience, min_lr=0.000001)
     else:
         scheduler = lr_scheduler.MultiStepLR(optimizer, opt.multistep_milestones)
     

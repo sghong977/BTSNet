@@ -204,13 +204,13 @@ EpicKitchen_l = [
 ]
 # slowfast101 : starts with lr 0.01. (not converged well on lr 0.1)
 EpicKitchen = [
-    'results/epic_resnet50_M4_O2_TC_20201104-085926',
+    'results/epic_resnet50_M4_O2_TC_20201118-030934',    #'results/epic_resnet50_M4_O2_TC_20201104-085926',
     'results/epic_resnet101_M4_O2_TC_20201116-014327', #'results/epic_resnet101_M4_O2_TC_20201106-155250',
     'results/epic_slowfast50_M4_O2_TC_20201104-032644',
     'results/epic_slowfast101_M4_O2_TC_20201111-014056',
     'results/epic_slowfast101_M4_O2_TC_20201113-004559', #'results/epic_slowfast101_M4_O2_TC_20201106-061910',
     
-    'results/epic_spnet26_M4_O2_TC_20201106-171538',
+    'results/epic_spnet26_M4_O2_TC_20201117-181458',   #'results/epic_spnet26_M4_O2_TC_20201106-171538',
     'results/epic_spnet50_M4_O2_TC_20201110-011514',
 ]
 
