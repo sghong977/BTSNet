@@ -154,7 +154,7 @@ def parse_opts():
                         help='Type of LR scheduler (multistep | plateau)')
     parser.add_argument(
         '--multistep_milestones',
-        default=[50, 100, 150],  #[7, 11, 15],         #
+        default=[50, 100, 150, 200],  #[7, 11, 15],         #
         type=int,
         nargs='+',
         help='Milestones of LR scheduler. See documentation of MultistepLR.')

@@ -209,12 +209,16 @@ def resnet200(**kwargs):
 
 # generate model here
 def generate_model(model_depth, n_classes, **kwargs):
-    assert model_depth in [50, 101]
+    assert model_depth in [50, 101, 152, 200]
 
     if model_depth == 50:
         model = resnet50(n_classes=n_classes, **kwargs)
     elif model_depth == 101:
         model = resnet101(n_classes=n_classes, **kwargs)
+    elif model_depth == 152:
+        model = resnet152(n_classes=n_classes, **kwargs)
+    elif model_depth == 200:
+        model = resnet200(n_classes=n_classes, **kwargs)
 
     return model
 

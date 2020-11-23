@@ -35,6 +35,8 @@ import time
 #--------------------------------------------------------
 from utils import get_normalize_method, get_mean_std, get_opt
 
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def json_serial(obj):
     if isinstance(obj, Path):
@@ -323,8 +325,11 @@ def main_worker(index, opt):
 
     criterion = CrossEntropyLoss().to(opt.device)
 
-    info = opt.dataset + "_" + opt.model + str(opt.model_depth) + opt.lr_scheduler + str(opt.learning_rate) + '_M' + str(opt.M) + '_' + opt.ops_type + '_' + opt.fuse_layer + '_'    ###
+    info = opt.dataset + "_" + opt.model + str(opt.model_depth)+ '_card' + str(opt.resnext_cardinality) + opt.lr_scheduler + str(opt.learning_rate) + '_M' + str(opt.M) + '_' + opt.ops_type + '_' + opt.fuse_layer + '_'    ###
     print(info)
+
+    #print("num params : ", count_parameters(model))
+    #return
 
     if not opt.no_train:
         (train_loader, train_sampler, train_logger, train_batch_logger,
