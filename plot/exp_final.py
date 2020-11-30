@@ -21,14 +21,15 @@ UCF_l = [
         'TC-M4-BTS50-O2-C16',
         'TC-M4-BTS101-O2-C16',
         # card8
-        'TC-M4-BTS26-O2-C8', # 6
+        'TC-M4-BTS26-O2-C8', # 9
         'TC-M4-BTS50-O2-C8',
         'TC-M4-BTS101-O2-C8',
        ]
 UCF = [
-    'results/ ',
-    'results/',
-    'results/',
+    'results/ucf101_resnet50_card16multistep0.1_M4_O2_TC_20201127-141256',
+    'results/ucf101_resnet101_card16multistep0.1_M4_O2_TC_20201128-131955',
+    '',
+    '',
     'results/ucf101_slowfast101_card16multistep0.1_M4_O2_TC_20201126-115930',  # garbage
     'results/ucf101_slowfast152_card16multistep0.1_M4_O2_TC_20201125-131232',
     'results/ucf101_slowfast200multistep0.1_M4_O2_TC_20201124-100349',
@@ -39,6 +40,7 @@ UCF = [
 
     'results/ucf101_btsnet26_card8multistep0.1_M4_O2_TC_20201124-054848',
     'results/ucf101_btsnet50_card8multistep0.1_M4_O2_TC_20201125-153920',
+    'results/ucf101_btsnet101_card8multistep0.1_M4_O2_TC_20201127-091834',
 
     ]
 
@@ -93,12 +95,12 @@ SVW = [
     'results/SVW_resnet50multistep0.1_M4_O2_TC_20201121-060718',
     'results/SVW_resnet101multistep0.1_M4_O2_TC_20201121-220200',
 
-    'results/',
+    '',   #2
     'results/SVW_slowfast101multistep0.01_M4_O2_TC_20201119-152318',
     'results/SVW_slowfast152multistep0.1_M4_O2_TC_20201123-145955',  # 58%.. not good
     'results/SVW_slowfast200_card16multistep0.1_M4_O2_TC_20201124-035243', #59%... not good
 
-    'results/SVW_btsnet26_card16multistep0.1_M4_O2_TC_20201124-170418',
+    'results/SVW_btsnet26_card16multistep0.1_M4_O2_TC_20201124-170418',  #6
     'results/SVW_btsnet50_card16multistep0.1_M4_O2_TC_20201125-084921',
     'results/SVW_btsnet101_card16multistep0.1_M4_O2_TC_20201126-024015',
     ]
@@ -122,12 +124,12 @@ EpicKitchen = [
     
     '',
     'results/epic_slowfast101_card16multistep0.01_M4_O2_TC_20201125-230609', #epic_slowfast101_M4_O2_TC_20201113-004559',
-    '',
+    'results/epic_slowfast152_card16multistep0.01_M4_O2_TC_20201128-143609',
     '',
 
     'results/epic_btsnet26multistep0.01_M4_O2_TC_20201121-213122', #6
     'results/epic_btsnet50multistep0.01_M4_O2_TC_20201125-112512',
-    '',
+    'results/epic_btsnet101_card16multistep0.01_M4_O2_TC_20201130-002218',
 ]
 
 
@@ -170,33 +172,26 @@ for j in range(len(HMDB)):
 
 SVW_arr = []
 for j in range(len(SVW)):
-    f2 = open(path+SVW[j]+"_val_acc.txt", 'r')
-    a = f2.readline().split(' ')[0:-1]
-    a = [float(i) for i in a]
-    SVW_arr.append(a)
-    f2.close()
+    if SVW[j] == '':
+        SVW_arr.append([])
+    else:
+        f2 = open(path+SVW[j]+"_val_acc.txt", 'r')
+        a = f2.readline().split(' ')[0:-1]
+        a = [float(i) for i in a]
+        SVW_arr.append(a)
+        f2.close()
 
-Hollywood2_arr = []
-for j in range(len(Hollywood2)):
-    f2 = open(path+Hollywood2[j]+"_val_acc.txt", 'r')
-    a = f2.readline().split(' ')[0:-1]
-    a = [float(i) for i in a]
-    Hollywood2_arr.append(a)
-    f2.close()
 
-UCF_print_idx =         [0,1,2,3, 17,18, 32,33]   #[0,1,2,3, 10,11,12]
-#HMDB_print_idx = [0,1,    10,11,12]
-#SVW_print_idx = [0,1]
+#UCF_print_idx =         [0,1,4,5,6,7,8,9,10,11]   #[0,1,2,3, 10,11,12]
+#HMDB_print_idx = [0,1,2,3,5,6,7,8,9,10]
+SVW_print_idx = [0,1,3,5,6,7,8]
 
-print("UCF")
-for i in range(len(UCF_print_idx)):
-    print(UCF_l[UCF_print_idx[i]], round(UCF_arr[UCF_print_idx[i]][-1]*100, 5))
-"""
-print("HMDB")
-for i in range(len(HMDB_print_idx)):
-    print(HMDB_l[HMDB_print_idx[i]], HMDB_arr[HMDB_print_idx[i]][-1])
+#print("UCF")
+#for i in range(len(UCF_print_idx)):
+#    print(UCF_l[UCF_print_idx[i]], round(UCF_arr[UCF_print_idx[i]][-1]*100, 5))
+#print("HMDB")
+#for i in range(len(HMDB_print_idx)):
+#    print(HMDB_l[HMDB_print_idx[i]], round(HMDB_arr[HMDB_print_idx[i]][-1]*100,5))
 print("SVW")
 for i in range(len(SVW_print_idx)):
-    print(SVW_l[SVW_print_idx[i]], SVW_arr[SVW_print_idx[i]][-1])
-
-"""
+    print(SVW_l[SVW_print_idx[i]], round(SVW_arr[SVW_print_idx[i]][-1]*100,5))
