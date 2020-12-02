@@ -133,11 +133,13 @@ def get_train_utils(opt, model_parameters):
                     weight_decay=opt.weight_decay,
                     nesterov=opt.nesterov)
 
-    assert opt.lr_scheduler in ['plateau', 'multistep']
+    assert opt.lr_scheduler in ['plateau', 'multistep', 'SGDR']
     assert not (opt.lr_scheduler == 'plateau' and opt.no_val)
     if opt.lr_scheduler == 'plateau':
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.plateau_patience, min_lr=0.000001)
+    elif opt.lr_scheduler == 'SGDR':
+        scheduler = lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=3, T_mult=1, eta_min=0.00001, last_epoch=-1)
     else:
         scheduler = lr_scheduler.MultiStepLR(optimizer, opt.multistep_milestones)
     
@@ -382,7 +384,7 @@ def main_worker(index, opt):
             val_acc_log.append(prev_val_acc)
             
 
-        if not opt.no_train and opt.lr_scheduler == 'multistep':
+        if not opt.no_train and opt.lr_scheduler in ['multistep', 'SGDR']:
             scheduler.step()
         elif not opt.no_train and opt.lr_scheduler == 'plateau':
             scheduler.step(prev_val_loss)

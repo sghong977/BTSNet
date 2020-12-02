@@ -151,7 +151,7 @@ def parse_opts():
     parser.add_argument('--lr_scheduler',
                         default='multistep',
                         type=str,
-                        help='Type of LR scheduler (multistep | plateau)')
+                        help='Type of LR scheduler (multistep | plateau | SGDR)')
     parser.add_argument(
         '--multistep_milestones',
         default=[50, 100, 150, 200],  #[7, 11, 15],         #
