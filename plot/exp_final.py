@@ -26,11 +26,11 @@ UCF_l = [
         'TC-M4-BTS101-O2-C8',
        ]
 UCF = [
-    'results/ucf101_resnet50_card16multistep0.1_M4_O2_TC_20201127-141256',
+    'results/ucf101_resnet50_card16multistep0.1_M4_O2_TC_20201127-141256', #ucf101_resnet50_card16multistep0.1_M4_O2_TC_20201202-055852_val_acc
     'results/ucf101_resnet101_card16multistep0.1_M4_O2_TC_20201128-131955',
-    '',
-    '',
-    'results/ucf101_slowfast101_card16multistep0.1_M4_O2_TC_20201126-115930',  # garbage
+
+    'results/ucf101_slowfast50_card16multistep0.1_M4_O2_TC_20201201-111357',
+    'results/ucf101_slowfast101_card16multistep0.1_M4_O2_TC_20201130-144454',  # bad results
     'results/ucf101_slowfast152_card16multistep0.1_M4_O2_TC_20201125-131232',
     'results/ucf101_slowfast200multistep0.1_M4_O2_TC_20201124-100349',
 
@@ -108,24 +108,28 @@ SVW = [
 EpicKitchen_l = [
         'ResNet-50', #0
         'ResNet-101',
-        'SlowFast-50', #2
-        'SlowFast-101',
+
+        'ResNeXt-50-C32', #2
+        'ResNeXt-101-C32',
+
+        'SlowFast-101', #4
         'SlowFast-152',
         'SlowFast-200',
 
-        'TC-M4-BTS26-O2', # 6
-        'TC-M4-BTS50-O2',
-        'TC-M4-BTS101-O2',
+        'TC-M4-BTS26-O2-C16', # 7
+        'TC-M4-BTS50-O2-C16',
+        'TC-M4-BTS101-O2-C16',
 ]
 # slowfast101 : starts with lr 0.01. (not converged well on lr 0.1)
 EpicKitchen = [
     'results/epic_resnet50multistep0.01_M4_O2_TC_20201123-171226', #epic_resnet50multistep0.01_M4_O2_TC_20201123-171226_val_acc
     'results/epic_resnet101multistep0.01_M4_O2_TC_20201121-110645',
-    
     '',
+    'results/epic_resnext101_card32multistep0.01_M4_O2_TC_20201130-141516',
+    
     'results/epic_slowfast101_card16multistep0.01_M4_O2_TC_20201125-230609', #epic_slowfast101_M4_O2_TC_20201113-004559',
     'results/epic_slowfast152_card16multistep0.01_M4_O2_TC_20201128-143609',
-    '',
+    'results/epic_slowfast200_card16multistep0.01_M4_O2_TC_20201201-080109',
 
     'results/epic_btsnet26multistep0.01_M4_O2_TC_20201121-213122', #6
     'results/epic_btsnet50multistep0.01_M4_O2_TC_20201125-112512',
@@ -182,9 +186,10 @@ for j in range(len(SVW)):
         f2.close()
 
 
-#UCF_print_idx =         [0,1,4,5,6,7,8,9,10,11]   #[0,1,2,3, 10,11,12]
-#HMDB_print_idx = [0,1,2,3,5,6,7,8,9,10]
-SVW_print_idx = [0,1,3,5,6,7,8]
+#UCF_print_idx =         [0,1,2,3,4,5,6,7,8,9,10,11]   #[0,1,2,3, 10,11,12]
+#HMDB_print_idx = [0,1,2,3, 5,6,7, 8,9,10]
+SVW_print_idx = [0,1, 3,4,5, 6,7,8]
+#EPIC_print_idx=[0,1,3, 4,5,6, 7,8,9]
 
 #print("UCF")
 #for i in range(len(UCF_print_idx)):
@@ -195,3 +200,6 @@ SVW_print_idx = [0,1,3,5,6,7,8]
 print("SVW")
 for i in range(len(SVW_print_idx)):
     print(SVW_l[SVW_print_idx[i]], round(SVW_arr[SVW_print_idx[i]][-1]*100,5))
+#print("EPIC")
+#for i in range(len(EPIC_print_idx)):
+#    print(EpicKitchen_l[EPIC_print_idx[i]], round(EpicKitchen_arr[EPIC_print_idx[i]][-1]*100,5))

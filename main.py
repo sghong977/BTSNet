@@ -325,7 +325,7 @@ def main_worker(index, opt):
 
     criterion = CrossEntropyLoss().to(opt.device)
 
-    info = opt.dataset + "_" + opt.model + str(opt.model_depth)+ '_card' + str(opt.resnext_cardinality) + opt.lr_scheduler + str(opt.learning_rate) + '_M' + str(opt.M) + '_' + opt.ops_type + '_' + opt.fuse_layer + '_'    ###
+    info = opt.dataset + '_class' + str(opt.n_classes) + "_" + opt.model + str(opt.model_depth)+ '_card' + str(opt.resnext_cardinality) + opt.lr_scheduler + str(opt.learning_rate) + '_M' + str(opt.M) + '_' + opt.ops_type + '_' + opt.fuse_layer + '_'    ###
     print(info)
 
     #print("num params : ", count_parameters(model))
