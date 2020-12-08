@@ -1,6 +1,7 @@
 import torch
 import time
 import sys
+import torchvision
 
 import torch
 import torch.distributed as dist
@@ -11,37 +12,62 @@ from utils import AverageMeter, calculate_accuracy
 import matplotlib.pyplot as plt
 import numpy as np
 
+path = "result_attns/"
+#i_batch = 19                     # print index
+
+
 # THIS IS TEMPORAL & CHANNEL ATTENTION (if visualize)
 # attn here
-# attns [# of SKConv][M][batch_size][channels][TEMPORAL]
+# attns [# of SKConv][batch_size][M][channels][TEMPORAL]
 def plot_attns_temporal(attns):
-    title = "UCF_M4_ep200_temporal"
-    B = len(attns)
-    M = len(attns[0])
-    batch = 1 #len(attns[0][0])
-    colors = ['red',  'blue', 'purple', 'green']
-    fig, axs = plt.subplots(B//4 + B%4 ,4,figsize=(B*2,B))    
+    global i_batch
+    print(len(attns), len(attns[0]), len(attns[0][0]), len(attns[0][0][0]), len(attns[0][0][0][0]))
+    title = "UCF_BTS_M4_ep200_temporal"
+    B = len(attns)              # blocks
+    M = len(attns[0][0])
+    batch = 1                    #len(attns[0])
+    pr = 3                 # per_row. plots per row
+
+    colors = ['red',  'cyan', 'blue', 'magenta']
+    fig, axs = plt.subplots(B//pr + B%pr ,pr,figsize=(B*1.5,B))    
+    """
     for b in range(B):
         for m in range(M):
             for bat in range(batch):
-                for tp in range(len(attns[b][m][bat][0])):
-                    tmp = np.asarray(attns[b][m][bat])
+                for tp in range(len(attns[b][bat][m][0])):
+                    tmp = np.asarray(attns[b][bat][m])
                     y = [tp for i in range(len(tmp))]
                     tmp = np.transpose(tmp)    # [TEMPORAL][CHANNEL]
-                    axs[b//4, b%4].set_title("Attention in Block" + str(b))
-                    axs[b//4, b%4].scatter(tmp[tp], y, c=colors[m], alpha=0.3)
-    plt.savefig("result_attns/"+title+"Attn.png")
-    
-    # for one data
-    bat = 15
-    fig, axs = plt.subplots(B//4 + B%4 ,4,figsize=(B*2,B))
+
+                    axs[b//pr, b%pr].set_title("Attention in Block" + str(b))
+                    axs[b//pr, b%pr].scatter(tmp[tp], y, c=colors[m], alpha=0.3)
+                    print(tp)
+            print("m", m)
+    plt.savefig(path+title+"Attn.png")
+    """
+    # averaging channels
+    fig, axs = plt.subplots(B//pr + B%pr ,pr,figsize=(B*1.8,B*1.1))    
     for b in range(B):
-        axs[b//4, b%4].set_title(video_ids[bat]+"Attention in Block" + str(b) + " M" + str(M))
         for m in range(M):
-            y = [m for i in range(len(attns[b][m][bat]))]
-            axs[b//4, b%4].scatter(attns[b][m][bat], y, c=colors[m], alpha=0.1)
-    plt.savefig("result_attns/"+title+"One_Attn.png")
-#        plt.savefig("Attn_b"+str(b)+"_batch"+str(batch)+".png")
+            tmp = np.asarray(attns[b][i_batch][m])
+            tmp = np.transpose(tmp)    # [TEMPORAL][CHANNEL]
+            tmp = np.average(tmp, axis=1)                    # channel average
+
+            axs[b//pr, b%pr].set_title("Attention in Block" + str(b))
+            axs[b//pr, b%pr].plot(tmp, c=colors[m])
+    plt.savefig(path+title+str(i_batch)+"_Attn_avg.png")
+
+    fig, axs = plt.subplots(B//pr + B%pr ,pr,figsize=(B*1.5,B*1.1))    
+    for b in range(B):
+        for m in range(M):
+            for tp in range(len(attns[b][i_batch][m][0])):
+                tmp = np.asarray(attns[b][i_batch][m])
+                y = [tp for i in range(len(tmp))]
+                tmp = np.transpose(tmp)    # [TEMPORAL][CHANNEL]
+                axs[b//pr, b%pr].set_title("Attention in Block" + str(b))
+                axs[b//pr, b%pr].scatter(tmp[tp], y, c=colors[m], alpha=0.5)
+    plt.savefig(path+title+str(i_batch)+"_Attn.png")
+
 
 
 #if visualize
@@ -60,7 +86,7 @@ def plot_attns(attns):
                 axs[b//4, b%4].set_title("Attention in Block" + str(b) + " M" + str(M))
                 y = [m for i in range(len(attns[b][m][bat]))]
                 axs[b//4, b%4].scatter(attns[b][m][bat], y, c=colors[m], alpha=0.1)
-    plt.savefig("result_attns/"+title+"Attn.png")
+    plt.savefig(path+title+"Attn.png")
     
     # for one data
     bat = 15
@@ -70,7 +96,7 @@ def plot_attns(attns):
         for m in range(M):
             y = [m for i in range(len(attns[b][m][bat]))]
             axs[b//4, b%4].scatter(attns[b][m][bat], y, c=colors[m], alpha=0.1)
-    plt.savefig("result_attns/"+title+"One_Attn.png")
+    plt.savefig(path+title+"One_Attn.png")
 #        plt.savefig("Attn_b"+str(b)+"_batch"+str(batch)+".png")
 
 def val_epoch(epoch,
@@ -81,6 +107,7 @@ def val_epoch(epoch,
               logger,
               tb_writer=None,
               distributed=False):
+    global i_batch
     print('validation at epoch {}'.format(epoch))
 
     model.eval()
@@ -98,10 +125,16 @@ def val_epoch(epoch,
             inputs = inputs.cuda()     # remove this!
             # get name
             #video_ids, segments = zip(*targets)
+            #---
+            _inputs = torch.transpose(inputs, 2,1)
+            #_inputs = torch.transpose(_inputs, 2, -1)
+            #[batch][temp][w,h][channel]
+            _inputs = _inputs.detach().cpu()
+            
+            #---
             
             targets = targets.to(device, non_blocking=True)
-            outputs, attns = model(inputs)
-            print(len(attns))
+            outputs, attns = model(inputs, attn=True)
             
             loss = criterion(outputs, targets)
             acc = calculate_accuracy(outputs, targets)
@@ -127,7 +160,11 @@ def val_epoch(epoch,
 
             # if visualize, break here.
             #plot_attns(attns, video_ids)
-            plot_attns_temporal(attns)
+            for i_batch in range(len(inputs)):
+                grd = torchvision.utils.make_grid(_inputs[i_batch])
+                torchvision.utils.save_image(grd, path+str(i_batch)+"_batch.png")
+
+                plot_attns_temporal(attns)
             break
 
 

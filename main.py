@@ -139,7 +139,7 @@ def get_train_utils(opt, model_parameters):
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.plateau_patience, min_lr=0.000001)
     elif opt.lr_scheduler == 'SGDR':
-        scheduler = lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=3, T_mult=1, eta_min=0.00001, last_epoch=-1)
+        scheduler = lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=5, T_mult=1, eta_min=0.00001, last_epoch=-1)
     else:
         scheduler = lr_scheduler.MultiStepLR(optimizer, opt.multistep_milestones)
     

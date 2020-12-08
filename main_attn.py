@@ -201,7 +201,7 @@ def get_val_utils(opt):
                                              batch_size=(opt.batch_size #//
                                                          #opt.n_val_samples
                                                          ),
-                                             shuffle=False,
+                                             shuffle=True,   # True for attn
                                              num_workers=opt.n_threads,
                                              pin_memory=True,
                                              sampler=val_sampler,
