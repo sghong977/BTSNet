@@ -10,7 +10,7 @@ root_path='./'
 annotation_path='./csv_and_json/hmdb51_1.json'
 video_path='../../../raid/video_data/hmdb51/frames'
 
-model=resnext   #resnet  sknet... 
+model=slowfast   #resnet  sknet... 
 depth=(50 101)  #101
 M=4              #
 fuse_layer=TC    #
@@ -24,9 +24,9 @@ n_classes=51
 sample_duration=30
 
 checkpoint=250             #
-learning_rate=0.1        #
+learning_rate=0.1        # let's try on 0.1 only for slowfast
 n_epochs=250               #
-scheduler=multistep         #
+scheduler=SGDR         #
 
 #plateau_patience=5
 cardinality='--resnext_cardinality 32'

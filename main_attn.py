@@ -272,6 +272,7 @@ def save_checkpoint(save_file_path, epoch, arch, model, optimizer, scheduler):
 Main worker Starts here!
 """
 def main_worker(index, opt):
+    opt.manual_seed = 5         ####
     random.seed(opt.manual_seed)
     np.random.seed(opt.manual_seed)
     torch.manual_seed(opt.manual_seed)

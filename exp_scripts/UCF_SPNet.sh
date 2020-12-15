@@ -2,7 +2,7 @@
 #cd home/sghong/SKNet-PyTorch
 #bash exp_scripts/debug.sh
 
-GPU=7
+GPU=4
 
 root_path='./'
 annotation_path='./csv_and_json/ucf101_01.json'
@@ -24,7 +24,7 @@ sample_duration=30
 checkpoint=200
 learning_rate=0.1        #
 n_epochs=200
-scheduler=multistep         #
+scheduler=SGDR         #
 
 #plateau_patience=5
 cardinality='--resnext_cardinality 16'

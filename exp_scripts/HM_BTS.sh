@@ -23,7 +23,7 @@ sample_duration=30
 checkpoint=250             #
 learning_rate=0.1        #
 n_epochs=250               #
-scheduler=multistep         #
+scheduler=SGDR     #multistep         #
 
 #plateau_patience=5
 cardinality='--resnext_cardinality 16'

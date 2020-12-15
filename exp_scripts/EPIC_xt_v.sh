@@ -2,14 +2,14 @@
 #cd ../sghong/SKNet-PyTorch
 #bash exp_scripts/debug.sh
 
-GPU=6,7
+GPU=4
 
 
 # NO ROOT AND VIDEO PATH
 annotation_path='/raid/video_data/epic/slowfast_frames/annotation/epic_verb.json'   #epic_fullnoun.json'
 
-model=resnext   #resnet  sknet... 
-depth=(101 50)
+model=slowfast   #resnet  sknet... 
+depth=(50 101 152 200)
 
 M=4              #
 fuse_layer=TC    #

@@ -2,14 +2,14 @@
 #cd ../sghong/SKNet-PyTorch
 #bash exp_scripts/debug.sh
 
-GPU=6
+GPU=5
 
 
 # NO ROOT AND VIDEO PATH
 annotation_path='/raid/video_data/epic/slowfast_frames/annotation/epic_verb.json'   #epic_fullnoun.json'
 
 model=btsnet   #resnet  sknet... 
-depth=(26 50 101)
+depth=(26 50)
 
 M=4              #
 fuse_layer=TC    #
@@ -28,7 +28,7 @@ n_epochs=250               #
 scheduler=multistep         #
 
 #plateau_patience=5
-cardinality='--resnext_cardinality 16'
+cardinality='--resnext_cardinality 32'
 
 i=0
 for i in "${!depth[@]}"; do

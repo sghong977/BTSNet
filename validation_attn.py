@@ -50,10 +50,11 @@ def plot_attns_temporal(attns):
     for b in range(B):
         for m in range(M):
             tmp = np.asarray(attns[b][i_batch][m])
+            tmp = (tmp - 0.25) * 1000        #
             tmp = np.transpose(tmp)    # [TEMPORAL][CHANNEL]
             tmp = np.average(tmp, axis=1)                    # channel average
 
-            axs[b//pr, b%pr].set_title("Attention in Block" + str(b))
+            axs[b//pr, b%pr].set_title("Block" + str(b))
             axs[b//pr, b%pr].plot(tmp, c=colors[m])
     plt.savefig(path+title+str(i_batch)+"_Attn_avg.png")
 
@@ -62,10 +63,11 @@ def plot_attns_temporal(attns):
         for m in range(M):
             for tp in range(len(attns[b][i_batch][m][0])):
                 tmp = np.asarray(attns[b][i_batch][m])
+                tmp = (tmp)# - 0.25)       #
                 y = [tp for i in range(len(tmp))]
                 tmp = np.transpose(tmp)    # [TEMPORAL][CHANNEL]
-                axs[b//pr, b%pr].set_title("Attention in Block" + str(b))
-                axs[b//pr, b%pr].scatter(tmp[tp], y, c=colors[m], alpha=0.5)
+                axs[b//pr, b%pr].set_title("Block" + str(b))
+                axs[b//pr, b%pr].scatter(y, tmp[tp], c=colors[m], alpha=0.5)
     plt.savefig(path+title+str(i_batch)+"_Attn.png")
 
 
