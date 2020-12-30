@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 path = "result_attns/"
+data = 'HM'
 #i_batch = 19                     # print index
 
 
@@ -20,9 +21,9 @@ path = "result_attns/"
 # attn here
 # attns [# of SKConv][batch_size][M][channels][TEMPORAL]
 def plot_attns_temporal(attns):
-    global i_batch
+    global i_batch, data
     print(len(attns), len(attns[0]), len(attns[0][0]), len(attns[0][0][0]), len(attns[0][0][0][0]))
-    title = "UCF_BTS_M4_ep200_temporal"
+    title = data+"_BTS_M4_ep200_temporal"
     B = len(attns)              # blocks
     M = len(attns[0][0])
     batch = 1                    #len(attns[0])
@@ -137,6 +138,9 @@ def val_epoch(epoch,
             
             targets = targets.to(device, non_blocking=True)
             outputs, attns = model(inputs, attn=True)
+            print(targets)
+            _, ooo = outputs.topk(1, 1, largest=True, sorted=True)
+            print("inference : ", ooo)
             
             loss = criterion(outputs, targets)
             acc = calculate_accuracy(outputs, targets)

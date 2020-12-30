@@ -9,7 +9,7 @@ GPU=5
 annotation_path='/raid/video_data/epic/slowfast_frames/annotation/epic_verb.json'   #epic_fullnoun.json'
 
 model=btsnet   #resnet  sknet... 
-depth=(26 50)
+depth=(26 50 101)
 
 M=4              #
 fuse_layer=TC    #
@@ -19,7 +19,7 @@ ops_type=O2      #
 batch_size=32
 
 dataset=epic
-n_classes=152   # verb
+n_classes=125   # verb
 sample_duration=30
 
 checkpoint=250             #
@@ -28,7 +28,7 @@ n_epochs=250               #
 scheduler=multistep         #
 
 #plateau_patience=5
-cardinality='--resnext_cardinality 32'
+cardinality='--resnext_cardinality 16'
 
 i=0
 for i in "${!depth[@]}"; do

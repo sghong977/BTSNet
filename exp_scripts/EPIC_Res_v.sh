@@ -19,7 +19,7 @@ ops_type=O2      #
 batch_size=32
 
 dataset=epic
-n_classes=152   # verb
+n_classes=125   # verb
 sample_duration=30
 
 checkpoint=250             #

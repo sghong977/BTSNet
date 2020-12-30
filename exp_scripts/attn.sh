@@ -2,9 +2,10 @@
 #cd home/sghong/SKNet-PyTorch
 #bash exp_scripts/debug.sh
 
-GPU=4
+GPU=3
 
 resume_path=' --resume_path results/ucf101_btsnet26multistep0.1_M4_O2_TC__save_200.pth '
+
 root_path='./'
 annotation_path='./csv_and_json/ucf101_01.json'
 video_path='../../../raid/video_data/ucf101/ucf101_videos'

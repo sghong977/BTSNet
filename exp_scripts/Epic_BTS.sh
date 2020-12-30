@@ -2,7 +2,7 @@
 #cd home/sghong/SKNet-PyTorch
 #bash exp_scripts/debug.sh
 
-GPU=6
+GPU=4
 
 
 # NO ROOT AND VIDEO PATH

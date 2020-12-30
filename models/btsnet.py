@@ -5,8 +5,6 @@ from torch import nn
 #from thop import clever_format
 
 
-attns = []     # for attention
-
 """
 1 : nn.Conv3d(in_planes,out_planes,kernel_size=1,stride=stride,bias=False)
 3 : nn.Conv3d(in_planes,out_planes,kernel_size=3,stride=stride,padding=1,bias=False)
@@ -101,7 +99,6 @@ class SKConv(nn.Module):
         self.softmax = nn.Softmax(dim=1)
         
     def forward(self, x):
-        global attns
         
         batch_size = x.shape[0]
 
@@ -124,7 +121,6 @@ class SKConv(nn.Module):
         elif self.fuse_layer == 'C':
             attention_vectors = attention_vectors.view(batch_size, self.M, self.mid_planes, 1, 1, 1)
         attention_vectors = self.softmax(attention_vectors)
-        attns.append(attention_vectors.squeeze().detach().cpu())   ####
         
         #---------- Selection
         attention_vectors = list(attention_vectors.chunk(self.M, dim=1))  # split to a and b
@@ -282,8 +278,7 @@ class SPNet(nn.Module):
             layers.append(SKUnit(self.in_planes, planes, cardinality, M=self.M, ops_type=self.ops_type, fuse_layer=self.fuse_layer))
         return nn.Sequential(*layers)
 
-    def forward(self, x, attn=False):
-        global attns
+    def forward(self, x):
         fea = self.basic_conv(x)
         fea = self.maxpool(fea)
         fea = self.stage_1(fea)
@@ -293,8 +288,6 @@ class SPNet(nn.Module):
         fea = self.gap(fea)
         fea = torch.squeeze(fea)
         fea = self.classifier(fea)
-        if attn is True:                # attns
-            return fea, attns           # attns
         return fea
 
 #generate model

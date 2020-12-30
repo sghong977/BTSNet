@@ -34,6 +34,9 @@ UCF_l = [
         'SlowFast-152-SGDR',
         'SlowFast-200-SGDR',
 
+        'TC-M4-BTS26-O2-C32', # 18
+        'TC-M4-BTS50-O2-C32',
+
        ]
 UCF = [
     'results/ucf101_resnet50_card16multistep0.1_M4_O2_TC_20201127-141256', #ucf101_resnet50_card16multistep0.1_M4_O2_TC_20201202-055852_val_acc
@@ -59,7 +62,11 @@ UCF = [
     'results/ucf101_class101_slowfast50_card32SGDR0.01_M4_O2_TC_20201207-192901',
     'results/ucf101_class101_slowfast101_card32SGDR0.01_M4_O2_TC_20201208-173142',
     'results/ucf101_class101_slowfast152_card32SGDR0.01_M4_O2_TC_20201209-141836',
-    'results/ucf101_class101_slowfast200_card32SGDR0.01_M4_O2_TC_20201210-132155'
+    'results/ucf101_class101_slowfast200_card32SGDR0.01_M4_O2_TC_20201210-132155',
+
+    # C32
+    'results/ucf101_class101_btsnet26_card32multistep0.1_M4_O2_TC_20201222-032619',
+    'results/ucf101_class101_btsnet50_card32multistep0.1_M4_O2_TC_20201223-140701',
     ]
 
 
@@ -79,8 +86,11 @@ HMDB_l = [
         'TC-M4-BTS50-O2',
         'TC-M4-BTS101-O2',
 
+        'TC-M4-BTS26-O2-C32', #11
+        'TC-M4-BTS50-O2-C32',
+
         # SGDR
-        'SlowFast-50-SGDR', #11
+        'SlowFast-50-SGDR', #13
         'SlowFast-101-SGDR',
         'TC-M4-BTS26-O2-SGDR',
 ]
@@ -99,12 +109,13 @@ HMDB = [
     'results/hmdb51_btsnet50multistep0.1_M4_O2_TC_20201121-081446',
     'results/hmdb51_btsnet101multistep0.1_M4_O2_TC_20201122-015538',
 
+    'results/hmdb51_class51_btsnet26_card32multistep0.1_M4_O2_TC_20201221-201736',
+    'results/hmdb51_class51_btsnet50_card32multistep0.1_M4_O2_TC_20201222-201107',
+
     # SGDR
     'results/hmdb51_class51_slowfast50_card32SGDR0.1_M4_O2_TC_20201209-181623',
     'results/hmdb51_class51_slowfast101_card32SGDR0.1_M4_O2_TC_20201210-035057',
-    
     'results/hmdb51_class51_btsnet26_card16SGDR0.1_M4_O2_TC_20201210-145533',
-
 ]
 
 # SVW
@@ -149,6 +160,9 @@ EpicKitchen_l = [
         'TC-M4-BTS26-O2-C16', # 7
         'TC-M4-BTS50-O2-C16',
         'TC-M4-BTS101-O2-C16',
+
+        'TC-M4-BTS26-O2-C32', # 10
+        'TC-M4-BTS50-O2-C32',
 ]
 # slowfast101 : starts with lr 0.01. (not converged well on lr 0.1)
 EpicKitchen = [
@@ -162,9 +176,13 @@ EpicKitchen = [
     'results/epic_slowfast152_card16multistep0.01_M4_O2_TC_20201128-143609',
     'results/epic_slowfast200_card16multistep0.01_M4_O2_TC_20201201-080109',
 
-    'results/epic_btsnet26multistep0.01_M4_O2_TC_20201121-213122', #6
+    'results/epic_btsnet26multistep0.01_M4_O2_TC_20201121-213122', #7
     'results/epic_btsnet50multistep0.01_M4_O2_TC_20201125-112512',
     'results/epic_btsnet101_card16multistep0.01_M4_O2_TC_20201130-002218',
+
+    'results/epic_class352_btsnet26_card32multistep0.01_M4_O2_TC_20201223-225409',  # 높은거 쓴거라 사실 결과 두개임
+    'results/epic_class352_btsnet50_card32multistep0.01_M4_O2_TC_20201229-220916', # 높은거 쓴거라 사실 결과 두개임
+
 ]
 
 EpicKitchen_verb_l = [
@@ -174,29 +192,29 @@ EpicKitchen_verb_l = [
         'ResNeXt-50-C32', #2
         'ResNeXt-101-C32',
 
-        'SlowFast-101', #4
-        'SlowFast-152',
+        'SlowFast-50', #4
+        'SlowFast-101',
         'SlowFast-200',
 
-        'TC-M4-BTS26-O2-C16', # 7
-        'TC-M4-BTS50-O2-C16',
-        'TC-M4-BTS101-O2-C16',
+        'TC-M4-BTS26-O2-C32', # 7
+        'TC-M4-BTS50-O2-C32',
+        #'TC-M4-BTS101-O2-C16',
 ]
 # slowfast101 : starts with lr 0.01. (not converged well on lr 0.1)
 EpicKitchen_verb = [
-    'results/epic_class152_resnet50_card16multistep0.01_M4_O2_TC_20201205-071733',
-    'results/epic_class152_resnet101_card16multistep0.01_M4_O2_TC_20201209-031508',
+    '', #'results/epic_class152_resnet50_card16multistep0.01_M4_O2_TC_20201205-071733',
+    '', #'results/epic_class152_resnet101_card16multistep0.01_M4_O2_TC_20201209-031508',
 
-    'results/epic_class152_resnext50_card32multistep0.01_M4_O2_TC_20201208-221920',
-    'results/epic_class152_resnext101_card32multistep0.01_M4_O2_TC_20201205-212559',
+    '', #'results/epic_class152_resnext50_card32multistep0.01_M4_O2_TC_20201208-221920',
+    '', #'results/epic_class152_resnext101_card32multistep0.01_M4_O2_TC_20201205-212559',
 
+    'results/epic_class125_slowfast50_card32multistep0.01_M4_O2_TC_20201220-083322',
+    'results/epic_class125_slowfast101_card32multistep0.01_M4_O2_TC_20201222-133443',    
     '',
-    '',    
-    '',
 
-    'results/epic_class152_btsnet26_card16multistep0.01_M4_O2_TC_20201205-204043',
-    'results/epic_class152_btsnet50_card16multistep0.01_M4_O2_TC_20201209-195255',
-    'results/epic_class152_btsnet101_card16multistep0.01_M4_O2_TC_20201212-233658'
+    'results/epic_class125_btsnet26_card32multistep0.01_M4_O2_TC_20201223-225453', #   epic_class152_btsnet26_card16multistep0.01_M4_O2_TC_20201205-204043',
+    'results/epic_class125_btsnet50_card32multistep0.01_M4_O2_TC_20201228-012857', #epic_class152_btsnet50_card16multistep0.01_M4_O2_TC_20201209-195255',
+    #'results/epic_class152_btsnet101_card16multistep0.01_M4_O2_TC_20201212-233658'
 ]
 #--------------------------
 path = '../'
@@ -258,11 +276,11 @@ for j in range(len(SVW)):
         f2.close()
 
 
-UCF_print_idx =   [0,1,2,3, 4,5,6,7, 8,9,10, 11,12,13, 14,15,16,17]   #[0,1,2,3, 10,11,12]
-HMDB_print_idx = [0,1,2,3, 4,5,6,7, 8,9,10, 11,12,13]
+UCF_print_idx =   [0,1,2,3, 4,5,6,7, 8,9,10, 11,12,13, 14,15,16,17, 18,19]   #[0,1,2,3, 10,11,12]
+HMDB_print_idx = [0,1,2,3, 4,5,6,7, 8,9,10, 11,12] ##,13]
 SVW_print_idx = [0,1, 3,4,5, 6,7,8]
-EPIC_print_idx=[0,1,2,3, 4,5,6, 7,8,9]
-VERB_print_idx=[0,1,2,3,7,8,9]
+EPIC_print_idx=[0,1,2,3, 4,5,6, 7,8,9, 10,11]
+VERB_print_idx=[4,5,7,8]
 
 print("UCF")
 for i in range(len(UCF_print_idx)):
