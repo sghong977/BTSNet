@@ -4,6 +4,14 @@ from pathlib import Path
 
 def parse_opts():
     parser = argparse.ArgumentParser()
+    
+    parser.add_argument(
+        '--splitNum',
+        default='fold',
+        type=str,
+        help='kfold_for_log'
+    )
+
     #------- spnet 
     parser.add_argument(
         '--M',
