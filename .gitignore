@@ -4,8 +4,9 @@ pretrained/
 results/*.pth
 olds/
 *_logs*
-*_attn*
+*_attn.py
 results
+results_attns
 plot
 exp_scripts
 *_backup*
