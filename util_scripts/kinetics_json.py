@@ -85,7 +85,7 @@ if __name__ == '__main__':
                               '(kinetics_test.csv (optional))'))
     parser.add_argument(
         'n_classes',
-        default=700,
+        default=400,
         type=int,
         help='400, 600, or 700 (Kinetics-400, Kinetics-600, or Kinetics-700)')
     parser.add_argument('video_path',
@@ -98,7 +98,7 @@ if __name__ == '__main__':
                         type=str,
                         help=('jpg or hdf5'))
     parser.add_argument('dst_path',
-                        default=None,
+                        default='./csv_and_json',
                         type=Path,
                         help='Path of dst json file.')
 

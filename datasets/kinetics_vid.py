@@ -1,5 +1,3 @@
-
-  
 # coding=utf-8
 import os, sys, time
 import torch
@@ -12,7 +10,7 @@ import random
 import shutil
 import pandas as pd
 
-class KineticsDataset_a(data.Dataset):
+class Kinetics(data.Dataset):
 	"""Kinetics Action Recognition Dataset Class.
 	Args:
 		TODO: Fill Args.
@@ -20,7 +18,7 @@ class KineticsDataset_a(data.Dataset):
 		TODO: Fill Attributes.
 	"""
 	def __init__(self, video_dir, frame_dir, meta_path, list_path, input_transform = None, num_frame=10, refresh=False):
-		super(KineticsDataset_a, self).__init__()
+		super(Kinetics, self).__init__()
 		
 		self.video_dir = video_dir
 		self.list_path = list_path
@@ -104,7 +102,7 @@ class KineticsDataset_a(data.Dataset):
 				# Error: moov atom not found python cv2
 				if (c == 0):
 					error_video.append(i)
-			print '\r====> %d/%d frames prepared'%(i, lines_len),
+			#print '\r====> %d/%d frames prepared'%(i, lines_len),
 		
 		for err_ind in error_video:
 			self.sample_list.pop(err_ind)
@@ -138,4 +136,3 @@ class KineticsDataset_a(data.Dataset):
 
 	def __len__(self):
 		return len(self.label_list)
-

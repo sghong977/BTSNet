@@ -3,6 +3,12 @@ logs/
 pretrained/
 results/*.pth
 olds/
+*_logs*
+*_attn*
+results
+plot
+exp_scripts
+*_backup*
 
 #-----------------
 # Byte-compiled / optimized / DLL files

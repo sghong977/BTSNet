@@ -245,7 +245,7 @@ def get_inference_utils(opt):
     inference_loader = torch.utils.data.DataLoader(
         inference_data,
         batch_size=opt.inference_batch_size,
-        shuffle=False,
+        shuffle=True,
         num_workers=opt.n_threads,
         pin_memory=True,
         worker_init_fn=worker_init_fn,
@@ -272,7 +272,7 @@ def save_checkpoint(save_file_path, epoch, arch, model, optimizer, scheduler):
 Main worker Starts here!
 """
 def main_worker(index, opt):
-    opt.manual_seed = 5         ####
+    opt.manual_seed = 3066         ####
     random.seed(opt.manual_seed)
     np.random.seed(opt.manual_seed)
     torch.manual_seed(opt.manual_seed)

@@ -1,4 +1,5 @@
 from torchvision import get_image_backend
+import torchvision
 
 from datasets.videodataset import VideoDataset
 from datasets.videodataset_multiclips import (VideoDatasetMultiClips,
@@ -8,6 +9,9 @@ from datasets.hollywood2 import Hollywood2, Hollywood2MultiClips
 from datasets.charades import Charades, CharadesMultiClips
 from datasets.epic_kitchen import EpicKitchen, EpicKitchenMultiClips
 from datasets.loader import VideoLoader, VideoLoaderHDF5, VideoLoaderFlowHDF5
+from datasets.kinetics import Kinetics700, Kinetics700MultiClips
+
+
 
 import torch
 
@@ -80,14 +84,6 @@ def get_training_data(video_path,
                                     target_transform=target_transform,
                                     video_loader=loader,
                                     video_path_formatter=video_path_formatter)
-    # for pretraining, we need Kinetics-700 and Moment-in-time Datasets
-    elif dataset_name == 'KM':
-        kinetics_data = None
-        moment_data = None
-
-        #concat (i'm not sure if it works)
-        training_data = ConcatDataset(kinetics_data, moment_data)
-
     elif dataset_name == 'jester':
         # different loader
         if get_image_backend() == 'accimage':
@@ -141,6 +137,22 @@ def get_training_data(video_path,
         training_data = EpicKitchen(video_path,
                                      annotation_path,
                                      'training',
+                                     data_name=dataset_name,
+                                     spatial_transform=spatial_transform,
+                                     temporal_transform=temporal_transform,
+                                     target_transform=target_transform,
+                                     video_loader=loader,
+                                     video_path_formatter=video_path_formatter)
+    elif dataset_name == 'kinetics':
+        if get_image_backend() == 'accimage':
+            from datasets.loader import ImageLoaderAccImage
+            loader = VideoLoader(epic_image_name_formatter, ImageLoaderAccImage())
+        else:
+            loader = VideoLoader(epic_image_name_formatter)
+        
+        training_data = Kinetics700(video_path,
+                                     annotation_path,
+                                     'train',
                                      data_name=dataset_name,
                                      spatial_transform=spatial_transform,
                                      temporal_transform=temporal_transform,
@@ -278,6 +290,23 @@ def get_validation_data(video_path,
             target_transform=target_transform,
             video_loader=loader,
             video_path_formatter=video_path_formatter)        
+    elif dataset_name == 'kinetics':
+        if get_image_backend() == 'accimage':
+            from datasets.loader import ImageLoaderAccImage
+            loader = VideoLoader(epic_image_name_formatter, ImageLoaderAccImage())
+        else:
+            loader = VideoLoader(epic_image_name_formatter)
+
+        validation_data = Kinetics700(
+            video_path,
+            annotation_path,
+            'validation',
+            data_name=dataset_name,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            video_loader=loader,
+            video_path_formatter=video_path_formatter)        
     else:
         validation_data = VideoDatasetMultiClips(
             video_path,
@@ -375,6 +404,21 @@ def get_inference_data(video_path,
             video_loader=loader,
             video_path_formatter=video_path_formatter)
     elif dataset_name == 'epic':
+        from datasets.epic_kitchen import collate_fn
+#        loader = VideoLoader(image_name_formatter)
+#        video_path_formatter = (
+#            lambda root_path, video_id: root_path / video_id)  #
+        inference_data = CharadesMultiClips(   #MultiClips
+            video_path,
+            annotation_path,
+            subset,
+            data_name=dataset_name,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            video_loader=loader,
+            video_path_formatter=video_path_formatter)
+    elif dataset_name == 'kinetics':
         from datasets.epic_kitchen import collate_fn
 #        loader = VideoLoader(image_name_formatter)
 #        video_path_formatter = (

@@ -4,7 +4,14 @@ from pathlib import Path
 
 def parse_opts():
     parser = argparse.ArgumentParser()
-    
+
+    parser.add_argument(
+        '--vit_config',
+        default='default',
+        type=str,
+        help='vit config.'
+    )
+
     parser.add_argument(
         '--splitNum',
         default='fold',
